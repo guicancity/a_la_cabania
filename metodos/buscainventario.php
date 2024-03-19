@@ -12,7 +12,7 @@ WHERE P.ACTIVO = 1
 ORDER BY P.NOMBREPRODUCTO,
              P.MARCA,
              P.MEDIDA
-LIMIT 10";
+LIMIT 12";
 
 if(isset($_POST['dato'])){
     $dato = $_POST['dato'];
