@@ -107,6 +107,17 @@ require_once('../metodos/conexion.php');
         </div>
       </div>
     </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <div class="form-group">
+          <label>CANTIDAD</label>
+          <input class="form-control" type="text" name="txtcantidad" id="txtcantidad">
+        </div>
+      </div>
+
+      
+    </div>
     <div class="row">
       <div class="col">
         <button type="button" id="btnGuardar" class="btn btn-success btn-lg mt-2"><i class="fa-regular fa-floppy-disk "></i></i> Guardar</button>
@@ -156,6 +167,7 @@ $('#btnGuardar').on('click',function(e){
   const unidad =              $('#txtUnidad').val();
   const precioCompra =        $('#txtPrecioCompra').val();
   const valor =               $('#txtValor').val();
+  const cantidad =               $('#txtcantidad').val();
 
   if(codigoBarras==""){
     toastr.error("El CODIGO DE BARRAS no puede ser vacio", "Error!",{
@@ -192,27 +204,36 @@ $('#btnGuardar').on('click',function(e){
     });
     return false;
   }
-      
-  $.ajax({
+  if(cantidad==""){
+    toastr.error("La CANTIDAD no puede ser vacio", "Error!",{
+      "progressBar":true,
+      "closeButton":true,
+      "timeOut":2000
+    });
+    return false;
+  }
+  
+   $.ajax({
    url: '../metodos/consultasJS.php',
     type: 'POST',
     data: {
-      accion:'BuscaBarraExistente',
-      codigoBarras:codigoBarras
+      accion:'buscabarraexistente',
+      codigobarras:codigoBarras
     },
    success: function(resp){
       if (parseInt(resp) >= 1) {
         Swal.fire({
           icon: 'error',
           title: 'Alerta!',
-          text: 'Producto'+ codigoBarras +' ya se encuentra registrado'
+          text: 'Producto '+ codigoBarras +' ya se encuentra registrado'
         });
                
       }else{        
-        insertProduct(codigoBarras,empresa,idPersona,nombreProducto,marca,sabor,medida,unidad,precioCompra,valor);
+        insertProduct(codigoBarras,empresa,idPersona,nombreProducto,marca,sabor,medida,unidad,precioCompra,valor,cantidad);
       }
   }
    })
+  
 
 })
  
@@ -224,25 +245,10 @@ $(function(){
 
   })
 
-  function validaexistencia(codigoBarras){
-    $.ajax({
-    url:'../metodos/consultasJS.php',
-    type:'POST',
-    data:{
-      accion:'ProductosTemp'},
-      success:function(respuesta){
-        if(respuesta > 0){
-          $('#btnPagar').show();
-        }else{
-          $('#btnPagar').hide();
-        }
-      }
-    })
-  }
   
 
 });
-function insertProduct(codigoBarras,empresa,idPersona, nombreProducto, marca, sabor, medida, unidad, precioCompra, valor){
+function insertProduct(codigoBarras,empresa,idPersona, nombreProducto, marca, sabor, medida, unidad, precioCompra, valor,cantidad){
     $.ajax({
     url: '../metodos/consultasJS.php',
     type: 'POST',
@@ -257,7 +263,8 @@ function insertProduct(codigoBarras,empresa,idPersona, nombreProducto, marca, sa
       medida:medida,
       unidad:unidad,
       precioCompra:precioCompra,
-      valor:valor
+      valor:valor,
+      cantidad:cantidad
     },
     success: function(respuesta){
       if (respuesta >= 1) {

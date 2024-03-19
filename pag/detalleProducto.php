@@ -161,7 +161,29 @@ $(window).on('load',function(e){
           
           return false;
         }
+
+        $.ajax({
+   url: '../metodos/consultasJS.php',
+    type: 'POST',
+    data: {
+      accion:'buscabarraexistente',
+      codigobarras:codigoBarras
+    },
+   success: function(resp){
+      if (parseInt(resp) >= 1) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Alerta!',
+          text: 'Producto '+ codigoBarras +' ya se encuentra registrado'
+        });
+               
+      }else{        
         insertDetProduct(idProductos, codigoBarras,sabor);
+      }
+  }
+   })
+
+        
 })
 
 

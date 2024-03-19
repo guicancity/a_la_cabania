@@ -1,5 +1,4 @@
 <?php
-session_start();
 //date_default_timezone_set('GMT-5');
 date_default_timezone_set('America/Bogota');
 	
@@ -22,45 +21,44 @@ switch ($accion) {
 			$unidad = strtoupper($_POST['unidad']);
 			$precioCompra = $_POST['precioCompra'];
 			$valor = $_POST['valor'];
+			$cantidad = $_POST['cantidad'];
 
-			$fechaActual = date( 'Y-m-d' );
+			$sql ="";
+			$sql = mysqli_prepare($conexion, "INSERT INTO PRODUCTOS(
+				IDEMPRESA,
+				IDPERSONAS,
+				NOMBREPRODUCTO,
+				MARCA,
+				MEDIDA,
+				UNIDAD,
+				VALOR,
+				PRECIOCOMPRA,
+				FECHACREACION,
+				ACTIVO)
+			VALUES(?,?,?,?,?,?,?,?,?,1)");
+			$sql->bind_param("iissssiis", $empresa,$persona,$nombreProducto,$marca,$medida,$unidad,$valor,$precioCompra,$fechaActual);
+			$execute = $sql->execute();
+			$codigo = mysqli_insert_id($conexion);
 
-			$sql = "INSERT INTO PRODUCTOS"."(
-										IDEMPRESA,
-										IDPERSONAS,
-										NOMBREPRODUCTO,
-										MARCA,
-										MEDIDA,
-										UNIDAD,
-										VALOR,
-										PRECIOCOMPRA,
-										FECHACREACION) 
-					VALUES(".$empresa.
-						",".$persona.
-						",'".$nombreProducto.
-						"','".$marca.
-						"','".$medida.
-						"','".$unidad.
-						"',".$valor.
-						",".$precioCompra.
-						",'".$fechaActual."');
-						";
-
-			$ejecuta = mysqli_query($conexion,$sql);
-			$codigo = mysqli_insert_id($conexion); 
-			$_SESSION['idNuevoProducto']= $codigo;
-			if ($ejecuta == 1) {
-				$sqlDetalleProducto = "INSERT INTO DETALLE_PRODUCTOS(IDPRODUCTOS,
-																	 CODIGOBARRAS,
-																	 SABOR)
-									   VALUES(".$codigo.
-									   ",'".$codigoBarras.
-									   "','".$sabor."')";
-				$ejecutaDetalleProducto = mysqli_query($conexion,$sqlDetalleProducto);
+			if ($execute == 1) {
+				$sqlDetalleProducto = "";
+				$sqlDetalleProducto = mysqli_prepare($conexion,"INSERT INTO DETALLE_PRODUCTOS(
+					IDPRODUCTOS,
+					CODIGOBARRAS,
+					SABOR)
+				VALUES(?,?,?)");
+				$sqlDetalleProducto->bind_param("iss",$codigo,$codigoBarras,$sabor);
+				$ejecutaDetalleProducto = $sqlDetalleProducto->execute();
+				
 				$sql2 = "INSERT INTO BODEGA(IDPRODUCTOS,CANTIDAD) VALUES(".$codigo.",0)";
-				$sql3 = "INSERT INTO ESTANTE(IDPRODUCTOS,CANTIDAD) VALUES(".$codigo.",0)";
 				$ejecuta2 = mysqli_query($conexion,$sql2);
-				$ejecuta3 = mysqli_query($conexion,$sql3);
+				
+				$sql3 = "";
+				$sql3 = mysqli_prepare($conexion,"INSERT INTO ESTANTE(IDPRODUCTOS,CANTIDAD) VALUES(?,?)");
+				$sql3->bind_param('ii',$codigo,$cantidad);
+				$execute3 = $sql3->execute();
+				
+				
 				echo $codigo;
 			}else{
 				echo 0;
@@ -94,16 +92,15 @@ switch ($accion) {
 
 	break;
 
-	case 'BuscaBarraExistente':
+	case 'buscabarraexistente':
 		if (!empty($_POST)) {
 			$respuesta = 0;
-			$codigoBarras = $_POST['codigoBarras'];
-			$sql = 'SELECT * FROM DETALLE_PRODUCTOS WHERE CODIGOBARRAS = "'.$codigoBarras.'"';
+			$codigobarras = $_POST['codigobarras'];
+			$sql = 'SELECT * FROM DETALLE_PRODUCTOS WHERE CODIGOBARRAS = "'.$codigobarras.'"';
 			$ejecuta = mysqli_query($conexion, $sql);
 			$row = mysqli_num_rows($ejecuta);
 			if($row >0){
 				$respuesta = 1;
-
 			}
 			echo $respuesta;
 		}

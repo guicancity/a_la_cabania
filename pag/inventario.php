@@ -188,8 +188,11 @@ $(document).on('click','#btnGuardar',function(e){
           
           return false;
         }
+
+
+
       
-        insertProduct(idProducto,idEmpresa,idPersonas,nombreProducto,marca,medida,unidad,precioCompra,valor);
+        updateproduct(idProducto,idEmpresa,idPersonas,nombreProducto,marca,medida,unidad,precioCompra,valor);
     
 
 })
@@ -296,7 +299,7 @@ $(document).on('change','#sltEmpresa',function(){
 }
 
 
-function insertProduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, medida, unidad, precioCompra, valor){
+function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, medida, unidad, precioCompra, valor){
     $.ajax({
     url: '../metodos/consultasJS.php',
     type: 'POST',
