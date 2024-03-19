@@ -493,7 +493,6 @@ switch ($accion) {
 					$sql1 = mysqli_prepare($conexion,"UPDATE FACTURA SET VALORTOTAL = ? WHERE IDFACTURA = ?");
 					$sql1->bind_param('ii',$nuevovalor,$idfactura);
 					$execute1 = $sql1->execute();
-					
 					echo $execute1;
 				}
 			}else{
@@ -501,6 +500,48 @@ switch ($accion) {
 			}
 
 		}
+	break;
+	case'desactivaproducto':
+	if(!empty($_POST)){
+		//recepcion de variables
+		$idproducto = $_POST['idproducto'];
+		if(cantidadEstante($conexion,$idproducto) == 0){
+			//creacion del update
+			$sql ="";
+			$sql = mysqli_prepare($conexion,"UPDATE PRODUCTOS SET ACTIVO = 0 WHERE IDPRODUCTOS = ?");
+			$sql->bind_param('i',$idproducto);
+			$execute = $sql->execute();
+			if($execute){
+				echo 1;
+			}else{
+				echo 2;
+			}
+		}else{
+			echo 3;
+		}
+		
+
+	}
+
+	break;
+	case'activaproducto':
+	if(!empty($_POST)){
+		//recepcion de variables
+		$idproducto = $_POST['idproducto'];
+
+		//creacion del update
+		$sql ="";
+		$sql = mysqli_prepare($conexion,"UPDATE PRODUCTOS SET ACTIVO = 1 WHERE IDPRODUCTOS = ?");
+		$sql->bind_param('i',$idproducto);
+		$execute = $sql->execute();
+		if($execute){
+			echo 1;
+		}else{
+			echo 2;
+		}
+
+	}
+
 	break;
 
 

@@ -112,5 +112,4 @@ function idpersonaxproducto($conexion,$idproducto){
 	return $idpersona;
 }
 
-
  ?>
