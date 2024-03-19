@@ -7,9 +7,10 @@ if(empty($_POST)){
     $dato = $_POST['dato'];
     $sql = "SELECT DP.SABOR,DP.CODIGOBARRAS, P.NOMBREPRODUCTO,P.MARCA, P.MEDIDA, P.UNIDAD FROM PRODUCTOS P
             INNER JOIN DETALLE_PRODUCTOS DP ON DP.IDPRODUCTOS = P.IDPRODUCTOS 
-            WHERE P.NOMBREPRODUCTO LIKE '%".$dato."%'
+            WHERE (P.ACTIVO = 1) AND 
+            (P.NOMBREPRODUCTO LIKE '%".$dato."%'
                     OR DP.CODIGOBARRAS LIKE '%".$dato."%'
-                    OR P.MARCA LIKE '%".$dato."%'
+                    OR P.MARCA LIKE '%".$dato."%')
                     ORDER BY P.NOMBREPRODUCTO,
                     P.MARCA
                     ";
