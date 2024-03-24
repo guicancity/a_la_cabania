@@ -65,32 +65,7 @@ switch ($accion) {
 			}
 		}
 	break;
-	case 'actualizarProducto':
-		if (!empty($_POST)){
-			$idProducto = $_POST['idProducto'];
-			$idEmpresa= $_POST['idEmpresa'];
-			$idPersonas= $_POST['idPersonas'];
-			$nombreProducto= strtoupper($_POST['nombreProducto']);
-			$marca= strtoupper($_POST['marca']);
-			$medida= $_POST['medida'];
-			$unidad= strtoupper($_POST['unidad']);
-			$valor= $_POST['valor'];
-			$precioCompra= $_POST['precioCompra'];
-			$sql = "UPDATE PRODUCTOS SET IDEMPRESA =".$idEmpresa.",
-										IDPERSONAS =".$idPersonas.",
-										NOMBREPRODUCTO ='".$nombreProducto."',
-										MARCA ='".$marca."',
-										MEDIDA ='".$medida."',
-										UNIDAD ='".$unidad."',
-										VALOR =".$valor.",
-										PRECIOCOMPRA =".$precioCompra.",
-										FECHACREACION ='".$fechaActual."'
-					WHERE IDPRODUCTOS =".$idProducto;
-			$ejecuta = mysqli_query($conexion,$sql);
-			echo $ejecuta;
-			}
-
-	break;
+	
 
 	case 'buscabarraexistente':
 		if (!empty($_POST)) {
@@ -104,34 +79,7 @@ switch ($accion) {
 			}
 			echo $respuesta;
 		}
-	break;
-
-	case 'agregacbodega':
-		if(!empty($_POST)){
-			$idProducto = $_POST['idProducto'];
-			$cantidad = $_POST['cantidad'];
-			$opcion = 'SUMA';
-			echo cambioBodega($conexion,$idProducto,$cantidad,$opcion);
-		}
-	break;
-	
-	case 'cambiaestante':
-		if(!empty($_POST)){
-		$resp = 2;
-		$idProducto = $_POST['idProducto'];
-		$cantidad = $_POST['cantidad'];
-		$opcion = 'RESTA';
-		if(cambioBodega($conexion,$idProducto,$cantidad,$opcion)!= 2){
-			$cactual = cantidadEstante($conexion,$idProducto);
-			$total = $cantidad + $cactual;
-			$sql = "UPDATE ESTANTE SET CANTIDAD =".$total. " WHERE IDPRODUCTOS = ".$idProducto;
-			$ejecuta = mysqli_query($conexion, $sql);
-			$resp = 1;
-		}
-		echo $resp;
-		}
-	break;
-
+	break;	
 	case 'creafactura':
 		if(!empty($_POST)){
 			$idpersonas = 5;
@@ -497,29 +445,6 @@ switch ($accion) {
 			}
 
 		}
-	break;
-	case'desactivaproducto':
-	if(!empty($_POST)){
-		//recepcion de variables
-		$idproducto = $_POST['idproducto'];
-		if(cantidadEstante($conexion,$idproducto) == 0){
-			//creacion del update
-			$sql ="";
-			$sql = mysqli_prepare($conexion,"UPDATE PRODUCTOS SET ACTIVO = 0 WHERE IDPRODUCTOS = ?");
-			$sql->bind_param('i',$idproducto);
-			$execute = $sql->execute();
-			if($execute){
-				echo 1;
-			}else{
-				echo 2;
-			}
-		}else{
-			echo 3;
-		}
-		
-
-	}
-
 	break;
 	case'activaproducto':
 	if(!empty($_POST)){

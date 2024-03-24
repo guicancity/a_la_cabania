@@ -23,11 +23,124 @@ require_once('../metodos/conexion.php');
     <section id="tabla" class="mb-4">
      
     </section>
+  </div>
+</body>
+
+<?php
+/*
+INICIO MODAL BODEGA
+ */
+?>
+ <div class="modal fade" id="agregaBodegaModal" tabindex="-1" role="dialog"  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">AGREGAR A BODEGA</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+             <div class="col">
+              <div class="form-group">
+                <label>Cantidad</label>
+                  <input class="form-control" type="hidden"  name="txtIdProductome" id="txtIdProductome">
+                  <input class="form-control" type="number" name="txtCantidadme" id="txtCantidadme">
+                  <div class="row">
+                    <div class="col">
+                      <button id="btnGuardarBodega" class="btn btn-success btn-lg mt-2">Guardar</button>
+                    </div>
+                  </div>
+                
+              </div>
+            </div>
+          </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<?php
+/*
+FIN MODAL BODEGA
+ */
+?>
+
+<?php
+/*
+INICIO EDITA PRODUCTO 
+ */
+?>
+ <div class="modal fade" id="editProducto" tabindex="-1" role="dialog"  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">EDITAR PRODUCTO</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control" type="text" hidden  name="txtIdProducto" id="txtIdProducto">
+        <section id="resultado"></section>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<?php
+/*
+FIN MODAL EDITA PRODUCTO
+ */
+?>
+
+
+<?php
+/*
+INICIO MODAL ESTANTE
+ */
+?>
+ <div class="modal" id="agregaEstanteModal" tabindex="-1" >
+  <div class="modal-dialog" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">AGREGAR AL ESTANTE</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+             <div class="col">
+              <div class="form-group">
+                <label>Cantidad</label>
+                <input class="form-control" type="number" name="txtCantidadmes" id="txtCantidadmes">
+                <input class="form-control" type="hidden"  name="txtIdProductomes" id="txtIdProductomes">
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        
+        <button id="btnGuardarEstante" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<?php
+/*
+FIN MODAL ESTANTE
+ */
+?>
  
 
 <script>
-
-   const Toast = Swal.mixin({
+  const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
   showConfirmButton: false,
@@ -38,6 +151,18 @@ require_once('../metodos/conexion.php');
     toast.addEventListener('mouseleave', Swal.resumeTimer)
   }
 })
+  var myModal = document.getElementById('agregaBodegaModal');
+  var myInput = document.getElementById('txtCantidadme');
+  myModal.addEventListener('shown.bs.modal', function () {
+  myInput.focus();
+  });
+
+  var myModal2 = document.getElementById('agregaEstanteModal');
+  var myInput2 = document.getElementById('txtCantidadmes');
+  myModal2.addEventListener('shown.bs.modal', function () {
+  myInput2.focus();
+  });
+
   
 $(buscar());
 
@@ -64,7 +189,7 @@ $(document).on('click','#btnGuardarBodega',function(e) {
           return false;
         }else{
           $.ajax({
-            url: '../metodos/consultasJS.php',
+            url: '../metodos/buscainventario.php',
             type: 'POST',
             data: {
               accion:'agregacbodega',
@@ -109,7 +234,7 @@ $(function(){
         }else{
 
           $.ajax({
-            url: '../metodos/consultasJS.php',
+            url: '../metodos/buscainventario.php',
             type: 'POST',
             data: {
               accion:'cambiaestante',
@@ -178,7 +303,6 @@ $(document).on('click','#btnGuardar',function(e){
           
           return false;
         }
-
     if(valor==""){
           toastr.error("El VALOR no puede ser vacio", "Error!",{
             "progressBar":true,
@@ -188,10 +312,6 @@ $(document).on('click','#btnGuardar',function(e){
           
           return false;
         }
-
-
-
-      
         updateproduct(idProducto,idEmpresa,idPersonas,nombreProducto,marca,medida,unidad,precioCompra,valor);
     
 
@@ -200,7 +320,6 @@ $(document).on('click','#btnGuardar',function(e){
 
 $(document).on('keyup','#txtPrecioCompra',function(){
     const precioCompra =$('#txtPrecioCompra').val();
-    
     $('#txtValor').val(margenganacia(precioCompra));
   })
 
@@ -222,9 +341,9 @@ $(document).on('click','.producto',function(){
   const idProducto = $(this).attr('data-id');
   $('#txtIdProducto').val(idProducto);
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/buscainventario.php',
     type:'POST',
-    data:{tabla: 'seleccionaProductoxId',
+    data:{accion: 'seleccionaProductoxId',
           idProducto:idProducto
     },
   })
@@ -266,10 +385,10 @@ $(document).on('change','#sltEmpresa',function(){
 
    function loadRepartidor(idEmpresa,idproducto){
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/buscainventario.php',
     type:'POST',
     data:{
-      tabla:'loadDistribuidor',
+      accion:'loadDistribuidor',
       idEmpresa:idEmpresa,
       idproducto:idproducto
     },
@@ -290,7 +409,8 @@ $(document).on('change','#sltEmpresa',function(){
   $.ajax({
     url:'../metodos/buscainventario.php',
     type:'POST',
-    data:{dato:dato,
+    data:{accion:'cargainventario',
+      dato:dato,
           tipo:tipo},
   success:function(resultado){
     $('#tabla').html(resultado);
@@ -301,7 +421,7 @@ $(document).on('change','#sltEmpresa',function(){
 
 function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, medida, unidad, precioCompra, valor){
     $.ajax({
-    url: '../metodos/consultasJS.php',
+    url: '../metodos/buscainventario.php',
     type: 'POST',
     data: {
       accion:'actualizarProducto',
@@ -331,8 +451,6 @@ function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, m
     }
   })
   }
-
-
   function desactivaProducto(idproducto,productobusca){
     Swal.fire({
       title: 'Desactivar',
@@ -345,7 +463,7 @@ function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, m
     }).then((result) => {
       if (result.isConfirmed) {
         $.ajax({
-          url: '../metodos/consultasJS.php',
+          url: '../metodos/buscainventario.php',
           type: 'POST',
           data: {
             accion:'desactivaproducto',
@@ -382,10 +500,6 @@ function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, m
       }
     })
   }
-
-
-
-
 
  </script>
 

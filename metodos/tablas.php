@@ -18,22 +18,28 @@ switch ($tabla) {
   $sqlTotal = 'SELECT SUM(VALORTOTAL) SUMA FROM FACTURA WHERE (PAGADO = 1) AND (FECHAVENTA BETWEEN "'.$fechaI.'" AND "'.$fechaF.'")';
   $ejecutarTotal = mysqli_query($conexion,$sqlTotal);
   $total_array = mysqli_fetch_array($ejecutarTotal);
+  $sumaventadia = number_format($total_array['SUMA'],0,",",".");
 
   $sqlabonot = 'SELECT SUM(VALORABONO) ABONO FROM ABONOS WHERE FECHAABONO BETWEEN "'.$fechaI.'" AND "'.$fechaF.'"';
   $ejecabonot = mysqli_query($conexion,$sqlabonot);
   $totalabonot = mysqli_fetch_array($ejecabonot);
+  $sumaabonodia = number_format($totalabonot['ABONO'],0,",",".");
+
   $totalsumaventas = $totalabonot['ABONO'] + $total_array['SUMA'];
 
   $sumatotal = number_format($totalsumaventas,0,",",".");
 
-		$respuesta .= '<table class="table table-hover">
+		$respuesta .= "<table class=\"table table-hover\">
         <thead>
           <tr>
             <th>Fecha</th>
-            <th>Ventas</th>
+            <th>Ventas dia</th>
+            <th>abonos</th>
+            <th>facturas cerradas</th>
+            <th>total día</th>
           </tr>
         </thead>
-        <tbody>';
+        <tbody>";
          while($fila = mysqli_fetch_array($ejecutar)){
           $fecha = $fila['FECHAVENTA'];
           $sqlabono = "SELECT CASE WHEN
@@ -42,20 +48,25 @@ switch ($tabla) {
             END AS ABONO FROM ABONOS WHERE  FECHAABONO = '".$fecha."' GROUP BY FECHAABONO";
           $ejecabono = mysqli_query($conexion,$sqlabono);
           $totalabono = mysqli_fetch_array($ejecabono);
-          $sumaventas = $totalabono['ABONO'] + $fila['SUMA'];
+          $sumadia = number_format($fila['SUMA'],0,",",".");
+          $abonosdia = number_format($totalabono['ABONO'],0,",",".");
           
-          $suma = number_format($sumaventas,0,",",".");
+         // $suma = number_format($sumaventas,0,",",".");
 
     $respuesta.= 
       "<tr>
         <td ><button class=\"btn btn-link\">{$fecha}</button></td>
-        <td >$ {$suma}</td>
+        <td >$ {$sumadia}</td>
+        <td >$ {$abonosdia}</td>
         
       </tr>";             
         }
     $respuesta.=
       "<tr class=\"border\">
         <td class=\"text-right\"><h2> <b> TOTAL:</b></h2></td>
+        <td >$ {$sumaventadia}</td>
+        <td >$ {$sumaabonodia}</td>
+        <td ></td>
         <td class=\"border border-success\"><h2> $ {$sumatotal} </h2></td>
       </tr>"; 
     $respuesta.="
@@ -63,147 +74,56 @@ switch ($tabla) {
       </table>";
     echo $respuesta;  
 	break;
+    case 'loadEmpresas':
+      $dato = $_POST['dato'];
 
-  case 'productosxempresa':
-    $idEmpresa = $_POST['idEmpresa'];
-    $idPersona = $_POST['idPersona'];
-    $empleado = "";
-    if($idPersona != null){
-      $empleado = ' AND P.IDPERSONAS = '.$idPersona;
-    }
-    
+      if($dato == null){
+        $sql = "SELECT IDEMPRESA,NOMBRES FROM EMPRESA ORDER BY NOMBRES ";
+      }else{
+        $sql = "SELECT IDEMPRESA,NOMBRES FROM EMPRESA WHERE NOMBRES LIKE '%". $dato ."%'  ORDER BY NOMBRES ";
+      }
+      
+      $ejecutar = mysqli_query($conexion,$sql);
+      $row = mysqli_num_rows($ejecutar);
 
-
-    $sql = 'SELECT E.NOMBRES, P.IDPRODUCTOS, P.NOMBREPRODUCTO, P.MARCA,P.MEDIDA,P.UNIDAD,P.PRECIOCOMPRA FROM PRODUCTOS P
-        INNER JOIN EMPRESA E
-        ON P.IDEMPRESA = E.IDEMPRESA WHERE P.IDEMPRESA = '.$idEmpresa.$empleado.' GROUP BY P.NOMBREPRODUCTO, P.MARCA,P.MEDIDA,P.IDPERSONAS ORDER BY P.NOMBREPRODUCTO';
-  $ejecutar = mysqli_query($conexion,$sql);
-
-        $respuesta .= '
-        <button class="btn btn-primary mt-3 mt-3" id="btnRetroceder"><i class="fa-solid fa-arrow-left-long"></i> Regresar</button>
-        <table class="table table-striped">
+      $respuesta .="
+      <table class=\"table table-hover\">
         <thead>
           <tr>
-            <th>Nombre producto</th>
-            <th>Marca</th>
-            <th>Medida</th>
-            <th>Unidad</th>
-            <th>Precio compra</th>
+            <th>Nombre empresa</th>
+            <th class=\"text-end\">Opciones</th>
           </tr>
-        </thead>
-        <tbody>';
-         while($fila = mysqli_fetch_array($ejecutar)){
-            
-    $respuesta.= 
-    '<tr >
-        <td> <button  class="btn btn-link" data-id="'.$fila["IDPRODUCTOS"].'">' .$fila["NOMBREPRODUCTO"].' </button></td>
-        <td> <span class="algo2">' .$fila["MARCA"].'</td>
-        <td> <span>' .$fila["MEDIDA"].'</span></td>
-        <td> <span>' .$fila["UNIDAD"].'</span></td>
-        <td class="text-end"> <span class="fs-4"><b> $' . number_format($fila["PRECIOCOMPRA"],0,",",".").'</b></span></td>
-    </tr>';             
-}
-$respuesta.='
-        </tbody>
-      </table>
-
-      ';
-
-    echo $respuesta;
-    
-    break;
-
-    case 'loadDistribuidor':
-    $idEmpresa = $_POST['idEmpresa'];
-    $idproducto = $_POST['idproducto'];
-    
-
-    
-
-
-    $sql = 'SELECT IDPERSONAS, IDEMPRESA,NOMBRES,APELLIDOS FROM PERSONAS WHERE IDEMPRESA = '.$idEmpresa;
-    $ejecutar = mysqli_query($conexion,$sql);
-
-    $respuesta .='
-        <label>DISTRIBUIDOR</label>
-           <select class="form-select" id="sltIdPersona">
-          ';
-
-       if($idproducto != 'null'){
-        $idpersona = idpersonaxproducto($conexion,$idproducto);
-    $sqlactual = "SELECT IDPERSONAS, IDEMPRESA,NOMBRES,APELLIDOS FROM PERSONAS WHERE IDPERSONAS = ".$idpersona;
-    $ejecuta = mysqli_query($conexion,$sqlactual);
-    $fila = mysqli_fetch_array($ejecuta);
-
-
-
-
-  $respuesta .=' 
-<option value="'.$fila['IDPERSONAS'].'">'. $fila['NOMBRES'] .' '.$fila['APELLIDOS'].'</option>
-';
-}
-while ($row =mysqli_fetch_assoc($ejecutar)) {
-$respuesta .=
-'
-<option value="'.$row['IDPERSONAS'].'">'. $row['NOMBRES'] .' '.$row['APELLIDOS'].'</option>
-';
-    
-}
-$respuesta.='</select>
-
-    ';
-    echo $respuesta;
-        
-        break;
-    case 'loadEmpresas':
-    $dato = $_POST['dato'];
-
-    if($dato == null){
-       $sql = "SELECT IDEMPRESA,NOMBRES FROM EMPRESA ORDER BY NOMBRES ";
-    }else{
-      $sql = "SELECT IDEMPRESA,NOMBRES FROM EMPRESA WHERE NOMBRES LIKE '%". $dato ."%'  ORDER BY NOMBRES ";
-
-    }
-            $ejecutar = mysqli_query($conexion,$sql);
-            $row = mysqli_num_rows($ejecutar);
-
-       $respuesta .='
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    
-                    <th>Nombre empresa</th>
-                    <th class="text-end">Opciones</th>
-                </tr>
-                <tbody>';
+        <tbody>";
         while($fila = mysqli_fetch_array($ejecutar)){
-     $respuesta.='               
-        
-        <tr>
-            <td> <button type="button" class="editar btn btn-link"  data-bs-toggle="modal" data-bs-target="#datosempresa" data-id="'.$fila['IDEMPRESA'].'">'.$fila['NOMBRES'].'</button></td>
+          $respuesta.="
+          <tr>
+          <td>
+            <button type=\"button\" class=\"editar btn btn-link\"  data-bs-toggle=\"modal\" data-bs-target=\"#datosempresa\" data-id=\"{$fila['IDEMPRESA']}\">{$fila['NOMBRES']}</button>
+          </td>
             
 
-                <td class="text-end">
-                  <div class="btn-group" role="group" aria-label="Basic example">
-                    <button class="editar btn btn-warning" data-bs-toggle="modal" data-bs-target="#editarprovedores" data-id="'.$fila['IDEMPRESA'].'"><i class="fa-solid fa-dolly"></i> PROVEDORES</button>
-                      <button class="productos btn btn-primary" data-bs-toggle="modal" data-bs-target="#verproductos"  data-id="'.$fila['IDEMPRESA'].'"><i class="fa-solid fa-boxes-stacked"></i> PRODUCTOS</button>
+                <td class=\"text-end\">
+                  <div class=\"btn-group\" role=\"group\" aria-label=\"Basic example\">
+                  <a target=\"_blank\" href=\"../pag/provedores.php?idempresa= {$fila['IDEMPRESA']} \" class=\" btn btn-warning\">PROVEDORES</a>  
+                  <a target=\"_blank\" href=\"../pag/productos.php?idempresa= {$fila['IDEMPRESA']} \" class=\" btn btn-primary\"> PRODUCTOS</a>
+                      
                   </div>
                 </td>
 
 
            
-        </tr>';
+        </tr>";
               
-}  
-$respuesta .='
+      }  
+  $respuesta .="
                 </tbody>
             </thead>
         </table>
-';
+";
 
 
     echo $respuesta;
-        break;
+break;
       case 'detalleProductos':
       $idProducto = $_POST['idProducto'];
 
@@ -287,114 +207,7 @@ $respuesta .='
         
         break;
 
-    case 'seleccionaProductoxId':
-      $idProducto = $_POST['idProducto'];
 
-    $respuesta .='
-        <form method="POST" class="container">
-    <div class="row pb-3">
-      <div class="col">
-        <h1>Editar producto</h1>
-      </div>
-    </div>
-
-    <div class="row">
-    ';
-
-    $sql = 'SELECT P.NOMBREPRODUCTO,P.IDEMPRESA,E.NOMBRES,P.MARCA,P.MEDIDA,P.UNIDAD,P.PRECIOCOMPRA,P.VALOR FROM PRODUCTOS P  INNER JOIN EMPRESA E ON E.IDEMPRESA = P.IDEMPRESA WHERE P.IDPRODUCTOS = '. $idProducto;
-    $ejec = mysqli_query($conexion,$sql);
-    $row = mysqli_fetch_assoc($ejec);
-          
-    $respuesta .='
-      
-      <div class="col">
-        <div class="form-group">
-          <label>EMPRESA</label>
-          <select class="form-select" id="sltEmpresa">';
-                $sql = 'SELECT * FROM EMPRESA ORDER BY NOMBRES';
-            $ejecuta = mysqli_query($conexion,$sql); 
-            $fila1 = mysqli_fetch_assoc($ejecuta) ;  
-            $respuesta .='        
-            <option selected="true" value="'. $row['IDEMPRESA'] .'">'. $row['NOMBRES'] .'</option>';
-
-            while($fila = mysqli_fetch_assoc($ejecuta)){
-      $respuesta .= '
-          <option value="'. $fila['IDEMPRESA'] .'">'. $fila['NOMBRES'] .'</option>';
-            }
-        
-          $respuesta .= ' 
-
-           </select>
-           <section id="distribuidor">
-             
-           </section>
-           
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label>NOMBRE PRODUCTO</label>
-          <input class="form-control" type="text" value="'. $row['NOMBREPRODUCTO'].'" name="txtNombreProducto" id="txtNombreProducto">
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-       <div class="form-group">
-          <label>MARCA</label>
-          <input class="form-control" type="text"  value="'. $row['MARCA'].'" name="txtMarca" id="txtMarca">
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label>MEDIDA</label>
-          <input class="form-control" type="text"  value="'. $row['MEDIDA'].'" name="txtMedida" id="txtMedida">
-        </div>
-      </div>
-
-      <div class="col">
-        <div class="form-group">
-          <label>UNIDAD</label>
-          <input class="form-control" type="text"  value="'. $row['UNIDAD'].'" name="txtUnidad" id="txtUnidad">
-        </div>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col">
-        <div class="form-group">
-          <label>PRECIO COMPRA</label>
-          <input class="form-control" type="number"  value="'. $row['PRECIOCOMPRA'].'" name="txtPrecioCompra" id="txtPrecioCompra">
-        </div>
-      </div>
-
-      <div class="col">
-        <div class="form-group">
-          <label>VALOR</label>
-          <input class="form-control" type="number"   value="'. $row['VALOR'].'" name="txtValor" id="txtValor">
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <button type="button" id="btnGuardar" class="btn btn-success btn-lg mt-2">Guardar</button>
-      </div>
-    </div>
-        
-</form>
-    ';
-
-
-
-echo $respuesta;
-
-
-	break;
     case 'editaVarieProdu':
     $IdDetProductos = $_POST['IdDetProductos'];
 
@@ -571,12 +384,109 @@ $respuesta .="
 
       break;
 
+      case 'cargaprovedores':
+      $idempresa = $_POST['idempresa'];
+
+      $sql = "SELECT IDEMPRESA,NOMBRES FROM EMPRESA WHERE IDEMPRESA = ".$idempresa;
+      $ejec = mysqli_query($conexion,$sql);
+      $row =mysqli_fetch_assoc($ejec);
+
+       $respuesta .= "
+       
+       <div class=\"container mt-4\">
+    <div class=\"row\">
+        <div class=\"col\">
+        <div class=\"form-group\">
+            <label>NOMBRE DE LA EMPRESA</label>
+            <input class=\"form-control\" type=\"text\" disabled=\"\" value=\"{$row['NOMBRES']}\" name=\"txtNombre\" id=\"txtNombre\">
+          </div>
+        </div>
+
+        
+  </div>
+  </div>
+</div>";   
+
+$sql = "SELECT IDPERSONAS,IDEMPRESA, NOMBRES, APELLIDOS,TELEFONO FROM PERSONAS WHERE TIPO = 1 AND IDEMPRESA =".$idempresa;
+            $ejecutar = mysqli_query($conexion,$sql);
+            $row = mysqli_num_rows($ejecutar);
+
+        $respuesta .="
+        <table class=\"table table-hover\">
+            <thead>
+                <tr>
+                    
+                    <th >NOMBRE PROVEDOR</th>
+                    <th >TELEFONO</th>
+                    <th class=\"text-end\">OPCIONES</th>
+                </tr>
+                <tbody>";
+        while($fila = mysqli_fetch_array($ejecutar)){
+     $respuesta.="              
+   <tr>
+            
+        <td>{$fila['NOMBRES']} {$fila['APELLIDOS']}</td>
+        <td >{$fila['TELEFONO']}</td>
+        <td class=\"text-end\"><div class=\"btn-group\" role=\"group\" aria-label=\"Basic example\"><button class=\"editar btn btn-warning\" data-bs-toggle=\"modal\" data-bs-target=\"#editaVariProd\" data-id=\"{$fila['IDPERSONAS']}\"><i class=\"fa-regular fa-pen-to-square\"></i> EDITAR</button> <button class=\"eliminar btn btn-danger\" data-bs-toggle=\"modal\" data-bs-target=\"#eliminaVariProd\"  data-id=\"{$fila['IDPERSONAS']}\"><i class=\"fa-solid fa-trash\"></i> ELIMINAR</button></div></td>
+        </tr>";
+              
+}  
+$respuesta .='
+                </tbody>
+            </thead>
+        </table>
+';
+
+
+    echo $respuesta;
+        
+        break;
+
+  case 'editarprovedor':
+    $idprovedor = $_POST['idprovedor'];
+
+    $sql = "SELECT NOMBRES,APELLIDOS,TELEFONO FROM PERSONAS WHERE TIPO=1 AND IDPERSONAS = ".$idprovedor;
+    $ejecuta = mysqli_query($conexion,$sql);
+    $fila = mysqli_fetch_assoc($ejecuta);
+    $respuesta .="
+
+
+
+    <div class=\"row\">
+          <div class=\"col\">
+          <div class=\"form-group\">
+            <label>Nombre</label>
+            <input value=\"{$idprovedor}\"  type=\"text\" hidden name=\"txtidprovedoru\" id=\"txtidprovedoru\">
+            <input class=\"form-control\" value=\"{$fila['NOMBRES']}\" type=\"text\" name=\"txtnombreproveu\" id=\"txtnombreproveu\">
+          </div>
+          </div>
+           </div>
+           <div class=\"row\">
+             <div class=\"col\">
+              <div class=\"form-group\">
+                <label>Apellido</label>
+                <input class=\"form-control\" type=\"text\" value=\"{$fila['APELLIDOS']}\" name=\"txtapellidou\" id=\"txtapellidou\">
+              </div>
+             </div>
+           </div>
+           <div class=\"row\">
+             <div class=\"col\">
+              <div class=\"form-group\">
+                <label>Telefono</label>
+                <input class=\"form-control\" type=\"text\" value=\"{$fila['TELEFONO']}\" name=\"txttelefonou\" id=\"txttelefonou\">
+              </div>
+             </div>
+           </div>
+
+
+
+    ";
+    echo $respuesta;
+
+    break;
+
   	default: 
 		// code...
 		break;
 }
-
-
  ?>
-
- 
