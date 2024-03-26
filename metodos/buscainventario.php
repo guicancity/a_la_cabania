@@ -161,111 +161,89 @@ echo $respuesta;
       </div>
       <div class=\"row\">
     ";
-    $sql = 'SELECT P.NOMBREPRODUCTO,P.IDEMPRESA,E.NOMBRES,P.MARCA,P.MEDIDA,P.UNIDAD,P.PRECIOCOMPRA,P.VALOR FROM PRODUCTOS P  INNER JOIN EMPRESA E ON E.IDEMPRESA = P.IDEMPRESA WHERE P.IDPRODUCTOS = '. $idProducto;
+    $sql = "SELECT P.NOMBREPRODUCTO,P.IDEMPRESA,E.NOMBRES,P.MARCA,P.MEDIDA,P.UNIDAD,P.PRECIOCOMPRA,P.VALOR FROM PRODUCTOS P  INNER JOIN EMPRESA E ON E.IDEMPRESA = P.IDEMPRESA WHERE P.IDPRODUCTOS = ". $idProducto;
     $ejec = mysqli_query($conexion,$sql);
     $row = mysqli_fetch_assoc($ejec);
-    $respuesta .='
-      <div class="col">
-      <div class="form-group">
+    $respuesta .="
+      <div class=\"col\">
+      <div class=\"form-group\">
         <label>EMPRESA</label>
-          <select class="form-select" id="sltEmpresa">';
-            $sql = 'SELECT * FROM EMPRESA ORDER BY NOMBRES';
+          <select class=\"form-select\" id=\"sltEmpresa\">";
+            $sql = "SELECT * FROM EMPRESA ORDER BY NOMBRES";
             $ejecuta = mysqli_query($conexion,$sql); 
             $fila1 = mysqli_fetch_assoc($ejecuta) ;  
-            $respuesta .='        
-            <option selected="true" value="'. $row['IDEMPRESA'] .'">'. $row['NOMBRES'] .'</option>';
+            $respuesta .="        
+            <option selected value=\"{$row['IDEMPRESA']}\">{$row['NOMBRES']}</option>";
             while($fila = mysqli_fetch_assoc($ejecuta)){
-    $respuesta .= '
-      <option value="'. $fila['IDEMPRESA'] .'">'. $fila['NOMBRES'] .'</option>';
+    $respuesta .= "
+      <option value=\"{$fila['IDEMPRESA']}\">{$fila['NOMBRES']}</option>";
             }
-    $respuesta .= ' 
+    $respuesta .= "
      </select>
-       <section id="distribuidor">
+       <section id=\"distribuidor\">
         </section>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
+    <div class=\"row\">
+      <div class=\"col\">
+        <div class=\"form-group\">
           <label>NOMBRE PRODUCTO</label>
-          <input class="form-control" type="text" value="'. $row['NOMBREPRODUCTO'].'" name="txtNombreProducto" id="txtNombreProducto">
+          <input class=\"form-control\" type=\"text\" value=\"{$row['NOMBREPRODUCTO']}\" name=\"txtNombreProducto\" id=\"txtNombreProducto\">
         </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col">
-       <div class="form-group">
+    <div class=\"row\">
+      <div class=\"col\">
+       <div class=\"form-group\">
           <label>MARCA</label>
-          <input class="form-control" type="text"  value="'. $row['MARCA'].'" name="txtMarca" id="txtMarca">
+          <input class=\"form-control\" type=\"text\"  value=\"{$row['MARCA']}\" name=\"txtMarca\" id=\"txtMarca\">
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
+    <div class=\"row\">
+      <div class=\"col\">
+        <div class=\"form-group\">
           <label>MEDIDA</label>
-          <input class="form-control" type="text"  value="'. $row['MEDIDA'].'" name="txtMedida" id="txtMedida">
+          <input class=\"form-control\" type=\"text\"  value=\"{$row['MEDIDA']}\" name=\"txtMedida\" id=\"txtMedida\">
         </div>
       </div>
 
-      <div class="col">
-        <div class="form-group">
+      <div class=\"col\">
+        <div class=\"form-group\">
           <label>UNIDAD</label>
-          <input class="form-control" type="text"  value="'. $row['UNIDAD'].'" name="txtUnidad" id="txtUnidad">
+          <input class=\"form-control\" type=\"text\"  value=\"{$row['UNIDAD']}\" name=\"txtUnidad\" id=\"txtUnidad\">
         </div>
       </div>
     </div>
 
-    <div class="row mb-3">
-      <div class="col">
-        <div class="form-group">
+    <div class=\"row mb-3\">
+      <div class=\"col\">
+        <div class=\"form-group\">
           <label>PRECIO COMPRA</label>
-          <input class="form-control" type="number"  value="'. $row['PRECIOCOMPRA'].'" name="txtPrecioCompra" id="txtPrecioCompra">
+          <input class=\"form-control\" type=\"number\"  value=\"{$row['PRECIOCOMPRA']}\" name=\"txtPrecioCompra\" id=\"txtPrecioCompra\">
         </div>
       </div>
 
-      <div class="col">
-        <div class="form-group">
+      <div class=\"col\">
+        <div class=\"form-group\">
           <label>VALOR</label>
-          <input class="form-control" type="number"   value="'. $row['VALOR'].'" name="txtValor" id="txtValor">
+          <input class=\"form-control\" type=\"number\"   value=\"{$row['VALOR']}\" name=\"txtValor\" id=\"txtValor\">
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <button type="button" id="btnGuardar" class="btn btn-success btn-lg mt-2">Guardar</button>
+    <div class=\"row\">
+      <div class=\"col\">
+        <button type=\"button\" id=\"btnGuardar\" class=\"btn btn-success btn-lg mt-2\">Guardar</button>
       </div>
     </div>
         
   </form>
-    ';
+    ";
   echo $respuesta;
   break;
-  case 'loadDistribuidor':
-    $idEmpresa = $_POST['idEmpresa'];
-    $idproducto = $_POST['idproducto'];
-    $sql = 'SELECT IDPERSONAS, IDEMPRESA,NOMBRES,APELLIDOS FROM PERSONAS WHERE IDEMPRESA = '.$idEmpresa;
-    $ejecutar = mysqli_query($conexion,$sql);
-    $respuesta .="
-      <label>DISTRIBUIDOR</label>
-      <select class=\"form-select\" id=\"sltIdPersona\">
-    ";
-    if($idproducto != 'null'){
-      $idpersona = idpersonaxproducto($conexion,$idproducto);
-      $sqlactual = "SELECT IDPERSONAS, IDEMPRESA,NOMBRES,APELLIDOS FROM PERSONAS WHERE IDPERSONAS = ".$idpersona;
-      $ejecuta = mysqli_query($conexion,$sqlactual);
-      $fila = mysqli_fetch_array($ejecuta);
-
-      $respuesta .="<option value=\"{$fila['IDPERSONAS']}\">{$fila['NOMBRES']} {$fila['APELLIDOS']}</option>";
-    }
-    while ($row =mysqli_fetch_assoc($ejecutar)) {
-      $respuesta .="<option value=\"{$row['IDPERSONAS']}\">{$row['NOMBRES']} {$row['APELLIDOS']}</option>";
-    }
-      $respuesta.="</select>";
-    echo $respuesta;
-    break;
+  
 case 'actualizarProducto':
     if (!empty($_POST)){
       $idProducto = $_POST['idProducto'];
@@ -313,6 +291,28 @@ case'desactivaproducto':
   }
 
   break;
+  case 'loadDistribuidor':
+    $idEmpresa = $_POST['idEmpresa'];
+    $idproducto = $_POST['idproducto'];
+  $respuesta .="
+      <label>DISTRIBUIDOR</label>
+      <select class=\"form-select\" id=\"sltIdPersona\">
+    ";
+    if($idproducto != 'null'){
+      $idpersona = idpersonaxproducto($conexion,$idproducto);
+      $sqlactual = "SELECT IDPERSONAS, IDEMPRESA,NOMBRES,APELLIDOS FROM PERSONAS WHERE IDEMPRESA = ".$idEmpresa;
+      $ejecuta = mysqli_query($conexion,$sqlactual);
+    }
+    while ($fila =mysqli_fetch_assoc($ejecuta)) {
+    if($fila['IDPERSONAS'] == $idpersona ){
+      $respuesta .="<option selected value=\"{$fila['IDPERSONAS']}\">{$fila['NOMBRES']} {$fila['APELLIDOS']}</option>";
+    }else{
+      $respuesta .="<option value=\"{$fila['IDPERSONAS']}\">{$fila['NOMBRES']} {$fila['APELLIDOS']}</option>";
+    }
+    }
+      $respuesta.="</select>";
+    echo $respuesta;
+    break;
   
   default:
     // code...
