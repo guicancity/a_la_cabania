@@ -105,12 +105,12 @@ while($fila = mysqli_fetch_array($ejecutar)){
     $cantidad = "table-success";
   }
 $respuesta.= 
-  "<tr class=\"{$cantidad}\">
+  "<tr >
     <td> <button type=\"button\" class=\" btn btn-link producto\" data-id=\"{$idproducto}\" data-bs-toggle=\"modal\" data-bs-target=\"#editProducto\">{$nombre}</button></td>
     <td> {$marca} </td>
     <td> {$medida} {$unidad} </td>
     <td> {$bodega} </td>
-    <td> {$estante} </td>
+    <td class=\"{$cantidad}\"> {$estante} </td>
     <td> <button class=\"desactivar btn btn-danger\" data-id=\"{$idproducto}\">DESACTIVAR</button></td>
     <td> <div class=\"btn-group\" role=\"group\" aria-label=\"Basic example\"><button class=\"bodega btn btn-info\" data-bs-toggle=\"modal\" data-bs-target=\"#agregaBodegaModal\" data-idpb=\"{$idproducto}\">AGREGAR</button> <button class=\"estante btn btn-primary\" data-bs-toggle=\"modal\" data-bs-target=\"#agregaEstanteModal\"  data-idpe=\" {$idproducto} \">AGREGAR</button></div>
       <a target=\"_blank\" href=\"../pag/detalleProducto.php?idp= {$idproducto} \" class=\" btn btn-warning\">VARIEDADES</a>
