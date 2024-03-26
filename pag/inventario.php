@@ -376,7 +376,7 @@ $(document).on('keyup','#txtBuscar',function(e){
 });
 
 $(document).on('change','#sltEmpresa',function(){
-    const empresa =    $('#sltEmpresa').val();
+    var empresa =  $('#sltEmpresa').val();
     var idproducto = $('#txtIdProducto').val();
     loadRepartidor(empresa,idproducto);
 

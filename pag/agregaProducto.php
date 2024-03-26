@@ -24,8 +24,8 @@ require_once('../metodos/conexion.php');
       <div class="col">
         <div class="form-group">
           <label>CÓDIGO DE BARRAS</label>
-          <input class="form-control" type="text" autofocus name="txtCodigoBarras" id="txtCodigoBarras">
-          <span class="badge badge-danger" hidden>El código de barras ya se encuentra registrado</span>
+          <input class="form-control" type="text" autofocus onkeyup="" name="txtCodigoBarras" id="txtCodigoBarras">
+          <span id="validacodigo" class="badge badge-danger"  hidden>El código de barras ya se encuentra registrado</span>
         </div>
       </div>
       <div class="col">
@@ -34,7 +34,7 @@ require_once('../metodos/conexion.php');
           <select class="form-select" id="sltEmpresa">
             <option selected="true" value="0">Seleccione...</option>
           <?php 
-            $sql = 'SELECT * FROM EMPRESA ORDER BY NOMBRES';
+            $sql = "SELECT * FROM EMPRESA ORDER BY NOMBRES";
             $ejecuta = mysqli_query($conexion,$sql);
             while($fila = mysqli_fetch_assoc($ejecuta)){
           ?>
@@ -154,12 +154,12 @@ $('#txtPrecioCompra').on('keyup',function(){
 
 $('#btnGuardar').on('click',function(e){
   e.preventDefault();
-  const codigoBarras =        $('#txtCodigoBarras').val();
+  const codigobarras =        $('#txtCodigoBarras').val();
   const empresa =             $('#sltEmpresa').val();
   var idPersona = document.getElementById("sltIdPersona").value;
-  if(idPersona == ""){
-    idPersona = 1;
-  }
+    if(idPersona == ""){
+      idPersona = 1;
+    }
   const nombreProducto =      $('#txtNombreProducto').val();
   const marca =               $('#txtMarca').val();
   const sabor =               $('#txtSabor').val();
@@ -169,7 +169,7 @@ $('#btnGuardar').on('click',function(e){
   const valor =               $('#txtValor').val();
   const cantidad =               $('#txtcantidad').val();
 
-  if(codigoBarras==""){
+  if(codigobarras==""){
     toastr.error("El CODIGO DE BARRAS no puede ser vacio", "Error!",{
       "progressBar":true,
       "closeButton":true,
@@ -212,27 +212,30 @@ $('#btnGuardar').on('click',function(e){
     });
     return false;
   }
-  
-   $.ajax({
-   url: '../metodos/consultasJS.php',
-    type: 'POST',
-    data: {
-      accion:'buscabarraexistente',
-      codigobarras:codigoBarras
-    },
-   success: function(resp){
-      if (parseInt(resp) >= 1) {
-        Swal.fire({
+
+
+  $.ajax({
+      url: '../metodos/agregaproducto.php',
+      type: 'POST',
+      data: {
+        accion:'buscabarraexistente',
+        codigobarras:codigobarras
+      },
+      success: function(resp){
+        if(resp == 1){
+          Swal.fire({
           icon: 'error',
           title: 'Alerta!',
-          text: 'Producto '+ codigoBarras +' ya se encuentra registrado'
+          text: 'Producto '+ codigobarras +' ya se encuentra registrado'
         });
-               
-      }else{        
-        insertProduct(codigoBarras,empresa,idPersona,nombreProducto,marca,sabor,medida,unidad,precioCompra,valor,cantidad);
-      }
+    
+  }else{
+    insertProduct(codigobarras,empresa,idPersona,nombreProducto,marca,sabor,medida,unidad,precioCompra,valor,cantidad);
   }
-   })
+      }
+    })
+  
+  
   
 
 })
@@ -241,20 +244,20 @@ $('#btnGuardar').on('click',function(e){
 $(function(){
   $('#sltEmpresa').on('change',function(){
     const empresa =    $('#sltEmpresa').val();
-    loadRepartidor(empresa,'null');
+    loadRepartidor(empresa);
 
   })
 
   
 
 });
-function insertProduct(codigoBarras,empresa,idPersona, nombreProducto, marca, sabor, medida, unidad, precioCompra, valor,cantidad){
+function insertProduct(codigobarras,empresa,idPersona, nombreProducto, marca, sabor, medida, unidad, precioCompra, valor,cantidad){
     $.ajax({
-    url: '../metodos/consultasJS.php',
+    url: '../metodos/agregaproducto.php',
     type: 'POST',
     data: {
       accion:'nuevoProducto',
-      codigoBarras:codigoBarras,
+      codigobarras:codigobarras,
       empresa:empresa,
       idPersona:idPersona,
       nombreProducto:nombreProducto,
@@ -283,21 +286,18 @@ function insertProduct(codigoBarras,empresa,idPersona, nombreProducto, marca, sa
   })
   }
 
-  function loadRepartidor(idEmpresa,idproducto){
-    const tabla = 'loadDistribuidor';
+  function loadRepartidor(idEmpresa){
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/agregaproducto.php',
     type:'POST',
     data:{
-      tabla:tabla,
-      idEmpresa:idEmpresa,
-      idproducto:idproducto
+      accion:'loaddistribuidor',
+      idEmpresa:idEmpresa
     },
     })
     .done(function(resultado){
       $("#distibuidor").html(resultado);
     });
-
   }
 
   function emptyinputs(){
@@ -314,10 +314,4 @@ function insertProduct(codigoBarras,empresa,idPersona, nombreProducto, marca, sa
         $('#txtCodigoBarras').focus();
         
   }
-
-  
-
-
-
-
 </script>
