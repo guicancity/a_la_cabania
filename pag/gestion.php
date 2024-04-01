@@ -133,12 +133,12 @@ window.location.href = "etiquetas.php";
 
 
 function  ventasxFecha(fechaI, fechaF){
-  const tabla = 'ventasDia';
+  
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/gestion.php',
     type:'POST',
     data:{
-      tabla:tabla,
+      accion:'ventasDia',
       fechaI:fechaI,
       fechaF:fechaF
     },

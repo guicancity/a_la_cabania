@@ -18,7 +18,7 @@ require_once('../metodos/conexion.php');
 
 
       <div class="col-12 col-lg-4">
-        <button type="button" class="btn btn-success shadow" data-bs-toggle="modal" data-bs-target="#variedad">
+        <button type="button" class="btn btn-success shadow" data-bs-toggle="modal" data-bs-target="#nuevoprovedor">
           <i class="fa-solid fa-add"></i> Nueva provedor</button>
       </div>
     <section id="tabla" class="mb-4">
@@ -29,10 +29,10 @@ require_once('../metodos/conexion.php');
 
   <?php
 /*
-INICIO AGREGAR VARIEDAD
+INICIO AGREGAR PROVEDOR
  */
 ?>
- <div class="modal fade" id="variedad" tabindex="-1" role="dialog"  aria-hidden="true">
+ <div class="modal fade" id="nuevoprovedor" tabindex="-1" role="dialog"  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -44,17 +44,25 @@ INICIO AGREGAR VARIEDAD
         <div class="row">
           <div class="col">
           <div class="form-group">
-            <label>código de barras</label>
+            <label>Nombres</label>
             <input value="<?php echo $_GET['idempresa']; ?>" hidden type="text" name="txtidempresa" id="txtidempresa">
-            <input class="form-control" type="text" name="txtCodigoBarras" id="txtCodigoBarras">
+            <input class="form-control" type="text" name="txtnombres" id="txtnombres">
+          </div>
+          </div>
+           </div>
+           <div class="row">
+          <div class="col">
+          <div class="form-group">
+            <label>Apellidos</label>
+            <input class="form-control" type="text" name="txtapellidos" id="txtapellidos">
           </div>
           </div>
            </div>
            <div class="row">
              <div class="col">
               <div class="form-group">
-                <label>variedad</label>
-                <input class="form-control" type="text" name="txtSabor" id="txtSabor">
+                <label>Teléfono</label>
+                <input class="form-control" type="text" name="txttelefono" id="txttelefono">
               </div>
              </div>
            </div>
@@ -82,7 +90,7 @@ INICIO AGREGAR VARIEDAD
 INICIO EDITAR VARIEDAD
  */
 ?>
- <div class="modal fade" id="editaVariProd" tabindex="-1" role="dialog"  aria-hidden="true">
+ <div class="modal fade" id="editaprovedor" tabindex="-1" role="dialog"  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -111,8 +119,8 @@ INICIO EDITAR VARIEDAD
 ?>
 
 <script>
-	var myModal = document.getElementById('variedad');
-  var myInput = document.getElementById('txtCodigoBarras');
+	var myModal = document.getElementById('nuevoprovedor');
+  var myInput = document.getElementById('txtnombres');
   myModal.addEventListener('shown.bs.modal', function () {
   myInput.focus();
 });
@@ -135,43 +143,46 @@ $(window).on('load',function(e){
 });
 
   $('#btnGuardar').on('click',function(e){
-  
   e.preventDefault();
-  const idProductos = $('#txtidProductos').val();
-  const codigoBarras =        $('#txtCodigoBarras').val();
-  const sabor =               $('#txtSabor').val();
-
-
-  if(codigoBarras==""){
-          toastr.error("El CODIGO DE BARRAS no puede ser vacio", "Error!",{
+  const idempresa =   $('#txtidempresa').val();
+  const nombres =     $('#txtnombres').val();
+  const apellidos =   $('#txtapellidos').val();
+  const telefono =    $('#txttelefono').val();
+  if(nombres==""){
+          toastr.error("El NOMBRE no puede ser vacio", "Error!",{
             "progressBar":true,
             "closeButton":true,
             "timeOut":2000
           });
-
-          
           return false;
         }
-  if(sabor==""){
-          toastr.error("La VARIEDAD no puede ser vacio", "Error!",{
+  if(apellidos==""){
+          toastr.error("El APELLIDO no puede ser vacio", "Error!",{
             "progressBar":true,
             "closeButton":true,
             "timeOut":2000
           });
-          
+          return false;
+        }
+  if(telefono==""){
+          toastr.error("El TELEFONO no puede ser vacio", "Error!",{
+            "progressBar":true,
+            "closeButton":true,
+            "timeOut":2000
+          });
           return false;
         }
 
-        insertDetProduct(idProductos, codigoBarras,sabor);
+        insertprovedor(idempresa,nombres,apellidos,telefono);
 })
 
 
 
 function cargaTabla(idempresa){//detalleProductos
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/provedores.php',
     type:'POST',
-    data:{tabla:'cargaprovedores',
+    data:{accion:'cargaprovedores',
           idempresa:idempresa},
   })
   .done(function(resultado){
@@ -183,15 +194,22 @@ function cargaTabla(idempresa){//detalleProductos
 $(document).on('click','.editar',function(){
   var idprovedor = $(this).attr('data-id');
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/provedores.php',
     type:'POST',
-    data:{tabla:'editarprovedor',
+    data:{accion:'editarprovedor',
           idprovedor:idprovedor},
   })
   .done(function(resultado){
     $("#tabladet").html(resultado);
   });
 })
+
+
+
+
+
+
+
 
 $(document).on('click','#btnUpdate',function(){
   var idProductos = $('#txtidprovedor').val();
@@ -204,66 +222,24 @@ $(document).on('click','#btnUpdate',function(){
 
 })
 
-$(document).on('click','.eliminar',function(){
-  var IdDetProductos = $(this).attr('data-id');
-  var idProductos = $('#txtidProductos').val();
-
-Swal.fire({
-  title: 'Eliminar',
-  text: "¿está seguro de eliminar?",
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'si, eliminar'
-}).then((result) => {
-  if (result.isConfirmed) {
+function insertprovedor(idempresa,nombres,apellidos,telefono){
     $.ajax({
-    url: '../metodos/consultasJS.php',
+    url: '../metodos/provedores.php',
     type: 'POST',
     data: {
-      accion:'eliminarVariedadProd',
-      IdDetProductos:IdDetProductos,
-      idProductos:idProductos},
-    success: function(respuesta){
-      if (respuesta >= 1) {
-        Swal.fire(
-      'Eliminado!',
-      'Variedad eliminada',
-      'success'
-    )
-      setTimeout( function() { window.open("detalleProducto.php?idp="+respuesta,"_self"); }, 600 ); 
-      }else{
-        Toast.fire({
-        icon: 'info',
-        title: 'Revise los datos ingresados'
-      });
-      }
-    }
-  })
-}
-})
-
-
-})
-
-function insertDetProduct(idProductos, codigoBarras,sabor){
-    $.ajax({
-    url: '../metodos/consultasJS.php',
-    type: 'POST',
-    data: {
-      accion:'insertaVariedadProd',
-      idProductos:idProductos,
-      codigoBarras:codigoBarras,
-      sabor:sabor,
+      accion:'insertaprovedor',
+      idempresa:idempresa,
+      nombres:nombres,
+      apellidos:apellidos,
+      telefono:telefono
     },
     success: function(respuesta){
       if (respuesta >= 1) {
        Toast.fire({
         icon: 'success',
-        title: 'Variedad agregado con éxito!'
+        title: 'Provedor agregado con éxito!'
       });
-      setTimeout( function() { window.open("detalleProducto.php?idp="+respuesta,"_self"); }, 600 ); 
+      setTimeout( function() { window.open("provedores.php?idempresa="+respuesta,"_self"); }, 600 ); 
       }else{
         Toast.fire({
         icon: 'info',
@@ -291,7 +267,7 @@ function insertDetProduct(idProductos, codigoBarras,sabor){
         icon: 'success',
         title: 'Variedad actualizada con éxito!'
       });
-      setTimeout( function() { window.open("detalleProducto.php?idp="+respuesta,"_self"); }, 600 ); 
+      setTimeout( function() { window.open("detalleProducto.php?idempresa="+respuesta,"_self"); }, 600 ); 
       }else{
         Toast.fire({
         icon: 'info',

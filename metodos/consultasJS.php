@@ -227,54 +227,6 @@ switch ($accion) {
 		echo json_encode($datos, JSON_FORCE_OBJECT);
 		}
 	break;
-	case 'insertaVariedadProd':
-	if(!empty($_POST)){
-		$idProductos =  $_POST['idProductos'];
-		$codigoBarras =  $_POST['codigoBarras'];
-		$sabor = strtoupper($_POST['sabor']); 
-
-
-
-		$sql= "INSERT INTO DETALLE_PRODUCTOS(IDPRODUCTOS,CODIGOBARRAS,SABOR) VALUES(".$idProductos.",'".$codigoBarras."','".$sabor."')";
-		$ejecuta = mysqli_query($conexion,$sql);
-		echo $idProductos;
-
-	}
-
-	break;
-	case'eliminarVariedadProd':
-		$IdDetProductos = $_POST['IdDetProductos'];
-		$idProductos = $_POST['idProductos'];
-		$sql = 'DELETE FROM DETALLE_PRODUCTOS WHERE IDDETALLE_PRODUCTO = '. $IdDetProductos;
-		$ejecuta = mysqli_query($conexion,$sql);
-		if($ejecuta){
-			echo $idProductos;	
-		}else{
-			echo $ejecuta;
-		}
-		
-
-	break;
-
-	case 'updateVariedadProd':
-	if(!empty($_POST)){
-		$idProductos =  $_POST['idProductos'];
-		$idProductosUp =  $_POST['idProductosUp'];
-		$codigoBarras =  $_POST['codigoBarras'];
-		$sabor = strtoupper($_POST['sabor']);
-
-		$sql = "UPDATE DETALLE_PRODUCTOS SET CODIGOBARRAS= '".$codigoBarras."',SABOR= '".$sabor."' WHERE IDDETALLE_PRODUCTO = ". $idProductosUp;
-		$ejecuta = mysqli_query($conexion,$sql);
-		if($ejecuta){
-			echo $idProductos;
-		}else{
-			echo $vida1 =  mysqli_error($conexion);
-		}
-		
-
-	}
-
-	break;
 	case 'nuevaempresa':
 	if(!empty($_POST)){
 	$nombreempresa = strtoupper($_POST['nombreempresa']);

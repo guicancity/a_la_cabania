@@ -163,14 +163,14 @@ $(window).on('load',function(e){
         }
 
         $.ajax({
-   url: '../metodos/consultasJS.php',
+   url: '../metodos/agregaproducto.php',
     type: 'POST',
     data: {
       accion:'buscabarraexistente',
       codigobarras:codigoBarras
     },
    success: function(resp){
-      if (parseInt(resp) >= 1) {
+      if (parseInt(resp) == 1) {
         Swal.fire({
           icon: 'error',
           title: 'Alerta!',
@@ -190,9 +190,9 @@ $(window).on('load',function(e){
 
 function cargaTabla(idProducto){//detalleProductos
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/detalleproducto.php',
     type:'POST',
-    data:{tabla:'detalleProductos',
+    data:{accion:'detalleProductos',
           idProducto: idProducto},
   })
   .done(function(resultado){
@@ -204,9 +204,9 @@ function cargaTabla(idProducto){//detalleProductos
 $(document).on('click','.editar',function(){
   var IdDetProductos = $(this).attr('data-id');
   $.ajax({
-    url:'../metodos/tablas.php',
+    url:'../metodos/detalleproducto.php',
     type:'POST',
-    data:{tabla:'editaVarieProdu',
+    data:{accion:'editaVarieProdu',
           IdDetProductos: IdDetProductos},
   })
   .done(function(resultado){
@@ -240,7 +240,7 @@ Swal.fire({
 }).then((result) => {
   if (result.isConfirmed) {
     $.ajax({
-    url: '../metodos/consultasJS.php',
+    url: '../metodos/detalleproducto.php',
     type: 'POST',
     data: {
       accion:'eliminarVariedadProd',
@@ -270,7 +270,7 @@ Swal.fire({
 
 function insertDetProduct(idProductos, codigoBarras,sabor){
     $.ajax({
-    url: '../metodos/consultasJS.php',
+    url: '../metodos/detalleproducto.php',
     type: 'POST',
     data: {
       accion:'insertaVariedadProd',
@@ -297,7 +297,7 @@ function insertDetProduct(idProductos, codigoBarras,sabor){
 
   function updateDetProduct(idProductos,idProductosUp, codigoBarras,sabor){
     $.ajax({
-    url: '../metodos/consultasJS.php',
+    url: '../metodos/detalleproducto.php',
     type: 'POST',
     data: {
       accion:'updateVariedadProd',
