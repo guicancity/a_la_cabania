@@ -56,7 +56,7 @@ switch ($accion) {
 
     $respuesta.= 
       "<tr>
-        <td ><button class=\"btn btn-link\">{$fecha}</button></td>
+        <td ><button class=\"fechadia btn btn-link\" data-fecha=\"{$fecha}\">{$fecha}</button></td>
         <td >$ {$sumadia}</td>
         <td >$ {$abonosdia}</td>
         
@@ -75,6 +75,49 @@ switch ($accion) {
       </table>";
     echo $respuesta;  
 	break;
+  case 'facturasxdia':
+  $fecha = $_POST['fecha'];
+  $sql = "";
+  $sql = mysqli_prepare($conexion,"SELECT F.IDFACTURA, F.VALORTOTAL, F.HORAFACTURA, P2.NOMBRES NVENDE,P2.APELLIDOS AVENDE, P.NOMBRES NCLIENTE, P.APELLIDOS ACLIENTE
+FROM FACTURA F 
+INNER JOIN PERSONAS P 
+  ON F.IDCLIENTE = P.IDPERSONAS
+INNER JOIN PERSONAS P2
+  ON F.IDPERSONAS = P2.IDPERSONAS
+WHERE PAGADO = 1 AND FECHAVENTA = ?");
+  $sql->bind_param('s',$fecha);
+  $ex = $sql->execute();
+  $execute = $sql->get_result();
+    $respuesta .="<table class=\"table table-hover\">
+          <thead>
+            <tr>
+              <th>Factura</th>
+              <th>Hora factura</th>
+              <th>nombre vendedor</th>
+              <th>nombre cliente</th>
+              <th>valor total</th>
+            </tr>
+          </thead>
+          <tbody>";
+      while ($fila = mysqli_fetch_array($execute)) {
+        $valortotalfactura = number_format($fila['VALORTOTAL'],0,",",".");
+       $respuesta .="
+        <tr>
+
+        <td><button class=\"factura btn btn-link\" data-fecha=\"{$fila['IDFACTURA']}\">{$fila['IDFACTURA']}</button></td>
+        <td>{$fila['HORAFACTURA']}</td>
+        <td>{$fila['NVENDE']} {$fila['AVENDE']}</td>
+        <td>{$fila['NCLIENTE']} {$fila['ACLIENTE']}</td>
+        <td>$ {$valortotalfactura}</td>
+          </tr>
+       ";
+      }
+    $respuesta .="
+            
+          </tbody>
+        </table>";
+    echo $respuesta;
+    break;
 
 
 	default:

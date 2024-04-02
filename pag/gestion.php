@@ -47,17 +47,10 @@ require_once('../metodos/conexion.php');
         <section id="facturas">
         <div class="row container">
           <h2><b>fecha</b></h2>
-          <input type="" disabled class="form-control" value="21/02/2021" name="">
+          <input type="" disabled class="form-control" id="txtfechadia"value="21/02/2021" name="txtfechadia">
         </div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Hora</th>
-              <th>Valor factura</th>
-            </tr>
-            
-          </thead>
-        </table>
+        <section id="facturasdia" class="container"></section>
+        
       </section>
         
       </div>
@@ -107,9 +100,16 @@ require_once('../metodos/conexion.php');
     const fechaI = $('#txtFechaI').val();
     const fechaF = $('#txtFechaF').val(); 
     ventasxFecha(fechaI, fechaF);
-  
 });
+
+
+
 $(function(){
+  $(document).on('click','.fechadia',function(){
+  const fechadia = $(this).attr('data-fecha');
+  $('#txtfechadia').val(fechadia);
+  facturasxdia(fechadia);
+  });
   $('#btnGenerar').on('click',function(event){
     event.preventDefault();
 window.location.href = "etiquetas.php";
@@ -145,6 +145,20 @@ function  ventasxFecha(fechaI, fechaF){
     })
     .done(function(resultado){
       $("#tabla").html(resultado);
+    });
+}
+
+function facturasxdia(fecha){
+    $.ajax({
+    url:'../metodos/gestion.php',
+    type:'POST',
+    data:{
+      accion:'facturasxdia',
+      fecha:fecha
+    },
+    })
+    .done(function(resultado){
+      $("#facturasdia").html(resultado);
     });
 }
   
