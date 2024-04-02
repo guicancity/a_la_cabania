@@ -189,7 +189,7 @@ $(document).on('click','#btnGuardarBodega',function(e) {
           return false;
         }else{
           $.ajax({
-            url: '../metodos/buscainventario.php',
+            url: '../metodos/inventario.php',
             type: 'POST',
             data: {
               accion:'agregacbodega',
@@ -234,7 +234,7 @@ $(function(){
         }else{
 
           $.ajax({
-            url: '../metodos/buscainventario.php',
+            url: '../metodos/inventario.php',
             type: 'POST',
             data: {
               accion:'cambiaestante',
@@ -341,7 +341,7 @@ $(document).on('click','.producto',function(){
   const idProducto = $(this).attr('data-id');
   $('#txtIdProducto').val(idProducto);
   $.ajax({
-    url:'../metodos/buscainventario.php',
+    url:'../metodos/inventario.php',
     type:'POST',
     data:{accion: 'seleccionaProductoxId',
           idProducto:idProducto
@@ -385,7 +385,7 @@ $(document).on('change','#sltEmpresa',function(){
 
    function loadRepartidor(idEmpresa,idproducto){
   $.ajax({
-    url:'../metodos/buscainventario.php',
+    url:'../metodos/inventario.php',
     type:'POST',
     data:{
       accion:'loadDistribuidor',
@@ -407,7 +407,7 @@ $(document).on('change','#sltEmpresa',function(){
     }
     
   $.ajax({
-    url:'../metodos/buscainventario.php',
+    url:'../metodos/inventario.php',
     type:'POST',
     data:{accion:'cargainventario',
       dato:dato,
@@ -421,7 +421,7 @@ $(document).on('change','#sltEmpresa',function(){
 
 function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, medida, unidad, precioCompra, valor){
     $.ajax({
-    url: '../metodos/buscainventario.php',
+    url: '../metodos/inventario.php',
     type: 'POST',
     data: {
       accion:'actualizarProducto',
@@ -463,7 +463,7 @@ function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, m
     }).then((result) => {
       if (result.isConfirmed) {
         $.ajax({
-          url: '../metodos/buscainventario.php',
+          url: '../metodos/inventario.php',
           type: 'POST',
           data: {
             accion:'desactivaproducto',

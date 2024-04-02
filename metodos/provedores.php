@@ -127,6 +127,23 @@ case 'editarprovedor':
 	}
 
 	break;
+    case 'updateprovedor':
+    if(!empty($_POST)){
+        $idpersona = $_POST['idpersona'];
+        $nombres = strtoupper($_POST['nombres']);
+        $apellidos = strtoupper($_POST['apellidos']);
+        $telefono = $_POST['telefono'];
+        $sql = "";
+        $sql =  mysqli_prepare($conexion,"UPDATE PERSONAS SET NOMBRES = ?,APELLIDOS = ?,TELEFONO = ? WHERE IDPERSONAS = ?");
+        $sql->bind_param('sssi',$nombres,$apellidos,$telefono,$idpersona);
+        $execute = $sql->execute();
+        if($execute){
+            echo 1;
+        }else{
+            echo $vida1 =  mysqli_error($conexion);
+        }
+    }
+break;
 
 	default:
 

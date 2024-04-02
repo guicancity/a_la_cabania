@@ -87,14 +87,14 @@ INICIO AGREGAR VARIEDAD
 
   <?php
 /*
-INICIO EDITAR VARIEDAD
+INICIO EDITAR PROVEDOR
  */
 ?>
  <div class="modal fade" id="editaprovedor" tabindex="-1" role="dialog"  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Editar variedad</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Editar provedor</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form method="POST">
@@ -176,21 +176,6 @@ $(window).on('load',function(e){
         insertprovedor(idempresa,nombres,apellidos,telefono);
 })
 
-
-
-function cargaTabla(idempresa){//detalleProductos
-  $.ajax({
-    url:'../metodos/provedores.php',
-    type:'POST',
-    data:{accion:'cargaprovedores',
-          idempresa:idempresa},
-  })
-  .done(function(resultado){
-    $("#tabla").html(resultado);
-  })
-}
-
-
 $(document).on('click','.editar',function(){
   var idprovedor = $(this).attr('data-id');
   $.ajax({
@@ -204,23 +189,30 @@ $(document).on('click','.editar',function(){
   });
 })
 
-
-
-
-
-
-
-
 $(document).on('click','#btnUpdate',function(){
-  var idProductos = $('#txtidprovedor').val();
-   const idProductosUp = $('#txtidProductosUp').val();
-  const codigoBarrasUp =        $('#txtCodigoBarrasUp').val();
-  const saborUp =               $('#txtSaborUp').val();
+  var idpersona =  $('#txtidprovedoru').val();
+  var idempresa = $('#txtidempresa').val();
+  const nombres =  $('#txtnombreproveu').val();
+  const apellidos =     $('#txtapellidou').val();
+  const telefono =     $('#txttelefonou').val();
 
-  updateDetProduct(idProductos, idProductosUp,codigoBarrasUp,saborUp);
+
+  updateprovedor(idempresa,idpersona,nombres,apellidos,telefono);
 
 
 })
+
+function cargaTabla(idempresa){//detalleProductos
+  $.ajax({
+    url:'../metodos/provedores.php',
+    type:'POST',
+    data:{accion:'cargaprovedores',
+          idempresa:idempresa},
+  })
+  .done(function(resultado){
+    $("#tabla").html(resultado);
+  })
+}
 
 function insertprovedor(idempresa,nombres,apellidos,telefono){
     $.ajax({
@@ -250,24 +242,24 @@ function insertprovedor(idempresa,nombres,apellidos,telefono){
   })
   }
 
-  function updateDetProduct(idProductos,idProductosUp, codigoBarras,sabor){
+  function updateprovedor(idempresa,idpersona,nombres,apellidos,telefono){
     $.ajax({
-    url: '../metodos/consultasJS.php',
+    url: '../metodos/provedores.php',
     type: 'POST',
     data: {
-      accion:'updateVariedadProd',
-      idProductos:idProductos,
-      idProductosUp:idProductosUp,
-      codigoBarras:codigoBarras,
-      sabor:sabor,
+      accion:'updateprovedor',
+      idpersona:idpersona,
+      nombres:nombres,
+      apellidos:apellidos,
+      telefono:telefono,
     },
     success: function(respuesta){
       if (respuesta >= 1) {
        Toast.fire({
         icon: 'success',
-        title: 'Variedad actualizada con éxito!'
+        title: 'Provedor actualizada con éxito!'
       });
-      setTimeout( function() { window.open("detalleProducto.php?idempresa="+respuesta,"_self"); }, 600 ); 
+      setTimeout( function() { window.open("provedores.php?idempresa="+idempresa,"_self"); }, 600 ); 
       }else{
         Toast.fire({
         icon: 'info',
