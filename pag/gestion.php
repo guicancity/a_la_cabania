@@ -4,6 +4,11 @@ require_once('../metodos/conexion.php');
 <!DOCTYPE html>
 <html>
 <head>
+  <style type="text/css">
+    .table-responsive {
+    max-height:300px;
+}
+  </style>
 <?php
   require_once('menu.php');
 ?>
@@ -49,7 +54,7 @@ require_once('../metodos/conexion.php');
           <h2><b>fecha</b></h2>
           <input type="" disabled class="form-control" id="txtfechadia"value="21/02/2021" name="txtfechadia">
         </div>
-        <section id="facturasdia" class="container"></section>
+        <section id="facturasdia" class="container table-responsive"></section>
         
       </section>
         

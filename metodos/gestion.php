@@ -84,7 +84,8 @@ INNER JOIN PERSONAS P
   ON F.IDCLIENTE = P.IDPERSONAS
 INNER JOIN PERSONAS P2
   ON F.IDPERSONAS = P2.IDPERSONAS
-WHERE PAGADO = 1 AND FECHAVENTA = ?");
+WHERE PAGADO = 1 AND FECHAVENTA = ?
+ORDER BY HORAFACTURA DESC");
   $sql->bind_param('s',$fecha);
   $ex = $sql->execute();
   $execute = $sql->get_result();
