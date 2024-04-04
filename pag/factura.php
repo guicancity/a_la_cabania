@@ -7,7 +7,19 @@ class PDF extends FPDF
 // Cabecera de página
 function Header()
 {
+	include('../metodos/conexion.php');
 	$idfactura = $_GET['idfactura'];
+	$sql = "";
+		$sql = mysqli_prepare($conexion,"SELECT PE.NOMBRES VNOMB, PE.APELLIDOS VAPELL, PE.TELEFONO, PE2.NOMBRES CNOMB, PE2.APELLIDOS CAPELL, PE2.CEDULA,F.FECHAVENTA 
+FROM FACTURA F
+INNER JOIN PERSONAS PE
+	ON F.IDPERSONAS = PE.IDPERSONAS
+INNER JOIN PERSONAS PE2
+	ON F.IDCLIENTE = PE2.IDPERSONAS WHERE F.IDFACTURA = ?");
+		$sql->bind_param('i',$idfactura);
+		$ex = $sql->execute();
+		$execute = $sql->get_result();
+		$row = mysqli_fetch_assoc($execute);
 	if ($this->PageNo() <= 1){
     // Logo
     $this->Image('imagenes/logo.png',10,8,33);
@@ -28,24 +40,29 @@ function Header()
     $this->SetFont('Arial','',15);
     $this->Cell(54,10,$idfactura,0,0,'L');
     // Salto de línea
-    $this->Ln(10);
+    $this->Ln(15);
     $this->SetFont('Arial','B',10);
     $this->Cell(25,8,utf8_decode('VENDEDOR:'),'0',0,'R');
     $this->SetFont('Arial','',10);
-    $this->Cell(90,8,utf8_decode('JEISSON FERNANDO ROJAS COCUNUBO'),'0',0,'L');
+    $this->Cell(90,8,utf8_decode($row['VNOMB'].' '.$row['VAPELL']),'0',0,'L');
     $this->SetFont('Arial','B',10);
-    $this->Cell(25,8,utf8_decode('CEDULA/NIT :'),'0',0,'R');
+    $this->Cell(25,8,utf8_decode('CELULAR :'),'0',0,'R');
     $this->SetFont('Arial','',10);
-	$this->Cell(50,8,utf8_decode('1052499459'),'0',1,'L');
+	$this->Cell(50,8,utf8_decode($row['TELEFONO']),'0',1,'L');
 
 	$this->SetFont('Arial','B',10);
 	$this->Cell(25,8,utf8_decode('CLIENTE:'),'0',0,'R');
     $this->SetFont('Arial','',10);
-    $this->Cell(90,8,utf8_decode('BOMBEROS VOLUNTARIOS GUICAN'),'0',0,'L');
+    $this->Cell(90,8,utf8_decode($row['CNOMB'].' '.$row['CAPELL']),'0',0,'L');
     $this->SetFont('Arial','B',10);
     $this->Cell(25,8,utf8_decode('CEDULA/NIT :'),'0',0,'R');
     $this->SetFont('Arial','',10);
-	$this->Cell(50,8,utf8_decode('900395098-0'),'0',1,'L');
+	$this->Cell(50,8,utf8_decode($row['CEDULA']),'0',1,'L');
+	$this->SetFont('Arial','B',10);
+    $this->Cell(25,8,utf8_decode('FECHA FACTURA:'),'0',0,'R');
+    $this->SetFont('Arial','',10);
+	$this->Cell(50,8,utf8_decode(date("d/m/Y",strtotime($row["FECHAVENTA"]))),'0',1,'L');
+
     $this->Ln(10);
 
   }
@@ -89,7 +106,7 @@ while($row = mysqli_fetch_array($execute)){
 	$valortotal = number_format($row['VTOTAL'],0,",",".");
 	$valorunidad = number_format($row['VALORPRODUCTOS'],0,",",".");
 	$pdf->Cell(60,7,utf8_decode($row['NOMBREPRODUCTO']),'LR',0,'L',0);
-	$pdf->Cell(60,7,utf8_decode($row['MARCA'] . $row['MEDIDA'] . $row['UNIDAD']),'LR',0,'L',0);
+	$pdf->Cell(60,7,utf8_decode($row['MARCA'] .' '. $row['MEDIDA'] . $row['UNIDAD']),'LR',0,'L',0);
 	$pdf->Cell(20,7,'$'.$valorunidad,'LR',0,'R',0);
 	$pdf->Cell(20,7,$row['CANTIDAD'],'LR',0,'R',0);
 	$pdf->Cell(30,7,'$'.$valortotal,'LR',1,'R',0);
