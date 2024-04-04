@@ -1,6 +1,6 @@
 <div class="row bg-light">
     <div class="col-4">
-      <img src="imagenes/Logo_transparente.png" width="106" height="70" class="d-inline-block align-top" alt="">
+      <img src="imagenes/Logo.png" width="106" height="70" class="d-inline-block align-top" alt="">
     </div>
     <div class="col-6 ">
       <h1><strong>Autoservicio la Cabaña</strong></h1>

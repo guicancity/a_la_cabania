@@ -42,6 +42,29 @@ require_once('../metodos/conexion.php');
           </div>
           <div class="row">
             <div class="col mt-5">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>cantidad productos</th>
+                    <th>cantidad páginas</th>
+                  </tr>
+                </thead>
+                <?php
+                $sql = "";
+                $sql = mysqli_query($conexion,"SELECT COUNT(IDPRODUCTOS) CANTIDAD FROM PRODUCTOS WHERE FECHACREACION <> ''");
+                $row = mysqli_fetch_assoc($sql);
+                $cantidad = $row['CANTIDAD'];
+                $porpagina = round($cantidad / 21,2);
+                ?>
+                <tbody>
+                    <tr>
+                      <td><?php echo $cantidad ?></td>
+                      <td><?php echo $porpagina .' '. 'Páginas'?> </td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col mt-5">
               <button class="btn btn-secondary btn-lg" id="btnGenerar"><i class="fa-solid fa-file-arrow-down"></i> Generar</button>
             </div>
           </div>

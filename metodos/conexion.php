@@ -1,6 +1,6 @@
 <?php 
 	$servidor = "127.0.0.1";
-	$base = "LA_CABANIA_2";// POS_A_LA_CABANIA LA_CABANIA_2
+	$base = "POS_A_LA_CABANIA";// POS_A_LA_CABANIA LA_CABANIA_2
 	$usuario = "root";
 	$password = "";
 
