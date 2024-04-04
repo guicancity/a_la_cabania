@@ -97,6 +97,7 @@ ORDER BY HORAFACTURA DESC");
               <th>nombre vendedor</th>
               <th>nombre cliente</th>
               <th>valor total</th>
+              <th>imprimir</th>
             </tr>
           </thead>
           <tbody>";
@@ -110,6 +111,7 @@ ORDER BY HORAFACTURA DESC");
         <td>{$fila['NVENDE']} {$fila['AVENDE']}</td>
         <td>{$fila['NCLIENTE']} {$fila['ACLIENTE']}</td>
         <td>$ {$valortotalfactura}</td>
+        <td><a class=\"btn  shadow btn-info\" target=\"_blank\" href=\"factura.php?idfactura={$fila['IDFACTURA']}\">Factura</a></td>
           </tr>
        ";
       }

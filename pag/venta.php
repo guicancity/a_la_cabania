@@ -26,12 +26,10 @@
       </div>
       <div class="col-lg-6  d-flex align-items-center justify-content-end">
           <input class="form-control" type="hidden" name="txtFactura" id="txtFactura">
-          <button class="me-4 btn btn-lg btn-warning shadow" id="btnPagar"><i class="fa-solid fa-bag-shopping"></i> PAGAR</button>
+          <button class="me-4 btn btn-lg btn-warning shadow" id="btnPagar">PAGAR</button>
            <div class="btn-group" role="group" aria-label="Basic example">
-          <button class="btn  btn-dark shadow " data-bs-toggle="modal" data-bs-target="#agregacredito" id="btnCredito">
-            <i class="fa-regular fa-credit-card"></i> APLICAR CR&Eacute;DITO
+          <button class="btn btn-lg btn-dark shadow " data-bs-toggle="modal" data-bs-target="#agregacredito" id="btnCredito">APLICAR CR&Eacute;DITO
           </button>
-          <a class="btn  shadow btn-info" id="btnfactura" target="_blank"  href="factura.php"><i class="fa-solid fa-receipt"></i> FACTURA</a>
         </div>
       </div>
     </div>
@@ -120,7 +118,6 @@
   $(window).on("load", function(){
     $('#btnPagar').hide();
     $('#btnCredito').hide();
-    $('#btnfactura').hide();
     creaFactura();
   })
 
@@ -286,11 +283,9 @@
       if(respuesta > 0){
         $('#btnPagar').show();
         $('#btnCredito').show();
-        $('#btnfactura').show();
       }else{
         $('#btnPagar').hide();
         $('#btnCredito').hide();
-        $('#btnfactura').hide();
       }
     }
     })
