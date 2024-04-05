@@ -1,6 +1,4 @@
-<?php 
-include('conexion.php');
-
+<?php
 function buscaIdxCodi($conexion,$codigobarras){
 	$codigo = 0;
 	$sql = "SELECT IDPRODUCTOS FROM DETALLE_PRODUCTOS WHERE CODIGOBARRAS = "."'".$codigobarras."'";
@@ -110,6 +108,57 @@ function idpersonaxproducto($conexion,$idproducto){
 	$fila = mysqli_fetch_array($execute);
 	$idpersona = $fila['IDPERSONAS'];
 	return $idpersona;
+}
+
+function fechaaletras($fecha){
+	$mesletra = "";
+	$dia = date("d",strtotime($fecha));
+	$mes = date("m",strtotime($fecha));
+	$año = date("Y",strtotime($fecha));
+
+switch ($mes) {
+	case "01":
+		$mesletra = "enero";
+		break;
+	case "02":
+		$mesletra = "febrero";
+		break;
+	case "03":
+		$mesletra = "marzo";
+		break;
+	case "04":
+		$mesletra = "abril";
+		break;
+	case "05":
+		$mesletra = "mayo";
+		break;
+	case "06":
+		$mesletra = "junio";
+		break;
+	case "07":
+		$mesletra = "julio";
+		break;
+	case "08":
+		$mesletra = "agosto";
+		break;
+	case "09":
+		$mesletra = "septiembre";
+		break;
+	case "10":
+		$mesletra = "octubre";
+		break;
+	case "11":
+		$mesletra = "noviembre";
+		break;
+	case "12":
+		$mesletra = "diciembre";
+		break;
+	default:
+		$mesletra = "no registra";
+		break;
+}
+$fechanueva = $dia .' de '.$mesletra .' de '.$año;
+return $fechanueva;
 }
 
  ?>

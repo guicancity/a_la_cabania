@@ -2,12 +2,17 @@
 require('../fpdf/fpdf.php');
 include('../metodos/conexion.php');
 
+
 class PDF extends FPDF
 {
 // Cabecera de página
 function Header()
 {
-	include('../metodos/conexion.php');
+	
+    
+    if ($this->PageNo() <= 1){
+    include('../metodos/conexion.php');
+    include('../metodos/funciones.php');
 	$idfactura = $_GET['idfactura'];
 	$sql = "";
 		$sql = mysqli_prepare($conexion,"SELECT PE.NOMBRES VNOMB, PE.APELLIDOS VAPELL, PE.TELEFONO, PE2.NOMBRES CNOMB, PE2.APELLIDOS CAPELL, PE2.CEDULA,F.FECHAVENTA 
@@ -20,7 +25,8 @@ INNER JOIN PERSONAS PE2
 		$ex = $sql->execute();
 		$execute = $sql->get_result();
 		$row = mysqli_fetch_assoc($execute);
-	if ($this->PageNo() <= 1){
+        
+        $fechaenletra = fechaaletras($row["FECHAVENTA"]);
     // Logo
     $this->Image('imagenes/logo.png',10,8,33);
     // Arial bold 15
@@ -42,26 +48,26 @@ INNER JOIN PERSONAS PE2
     // Salto de línea
     $this->Ln(15);
     $this->SetFont('Arial','B',10);
-    $this->Cell(25,8,utf8_decode('VENDEDOR:'),'0',0,'R');
+    $this->Cell(25,8,utf8_decode('VENDEDOR:'),0,0,'R');
     $this->SetFont('Arial','',10);
-    $this->Cell(90,8,utf8_decode($row['VNOMB'].' '.$row['VAPELL']),'0',0,'L');
+    $this->Cell(90,8,utf8_decode($row['VNOMB'].' '.$row['VAPELL']),0,0,'L');
     $this->SetFont('Arial','B',10);
-    $this->Cell(25,8,utf8_decode('CELULAR :'),'0',0,'R');
+    $this->Cell(25,8,utf8_decode('CELULAR :'),0,0,'R');
     $this->SetFont('Arial','',10);
-	$this->Cell(50,8,utf8_decode($row['TELEFONO']),'0',1,'L');
+	$this->Cell(50,8,utf8_decode($row['TELEFONO']),0,1,'L');
 
 	$this->SetFont('Arial','B',10);
-	$this->Cell(25,8,utf8_decode('CLIENTE:'),'0',0,'R');
+	$this->Cell(25,8,utf8_decode('CLIENTE:'),0,0,'R');
     $this->SetFont('Arial','',10);
-    $this->Cell(90,8,utf8_decode($row['CNOMB'].' '.$row['CAPELL']),'0',0,'L');
+    $this->Cell(90,8,utf8_decode($row['CNOMB'].' '.$row['CAPELL']),0,0,'L');
     $this->SetFont('Arial','B',10);
-    $this->Cell(25,8,utf8_decode('CEDULA/NIT :'),'0',0,'R');
+    $this->Cell(25,8,utf8_decode('CEDULA/NIT :'),0,0,'R');
     $this->SetFont('Arial','',10);
-	$this->Cell(50,8,utf8_decode($row['CEDULA']),'0',1,'L');
+	$this->Cell(50,8,utf8_decode($row['CEDULA']),0,1,'L');
 	$this->SetFont('Arial','B',10);
-    $this->Cell(25,8,utf8_decode('FECHA FACTURA:'),'0',0,'R');
+    $this->Cell(25,8,utf8_decode('FECHA FACTURA:'),0,0,'R');
     $this->SetFont('Arial','',10);
-	$this->Cell(50,8,utf8_decode(date("d/m/Y",strtotime($row["FECHAVENTA"]))),'0',1,'L');
+	$this->Cell(50,8,$fechaenletra,0,1,'L');
 
     $this->Ln(10);
 
