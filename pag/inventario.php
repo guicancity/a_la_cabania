@@ -41,22 +41,19 @@ INICIO MODAL BODEGA
       </div>
       <div class="modal-body">
         <div class="row">
-             <div class="col">
+            <div class="col">
               <div class="form-group">
                 <label>Cantidad</label>
                   <input class="form-control" type="hidden"  name="txtIdProductome" id="txtIdProductome">
                   <input class="form-control" type="number" name="txtCantidadme" id="txtCantidadme">
-                  <div class="row">
-                    <div class="col">
-                      <button id="btnGuardarBodega" class="btn btn-success btn-lg mt-2">Guardar</button>
-                    </div>
-                  </div>
-                
               </div>
             </div>
           </div>
-      </div>
-      
+      </div>            
+      <div class="modal-footer">
+        <button id="btnGuardarBodega" class="btn btn-success mt-2">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>  
     </div>
   </div>
 </div>
@@ -67,37 +64,6 @@ INICIO MODAL BODEGA
 FIN MODAL BODEGA
  */
 ?>
-
-<?php
-/*
-INICIO EDITA PRODUCTO 
- */
-?>
- <div class="modal fade" id="editProducto" tabindex="-1" role="dialog"  aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">EDITAR PRODUCTO</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        <input class="form-control" type="text" hidden  name="txtIdProducto" id="txtIdProducto">
-        <section id="resultado"></section>
-      </div>
-      
-    </div>
-  </div>
-</div>
-
-
-<?php
-/*
-FIN MODAL EDITA PRODUCTO
- */
-?>
-
-
 <?php
 /*
 INICIO MODAL ESTANTE
@@ -137,6 +103,38 @@ INICIO MODAL ESTANTE
 FIN MODAL ESTANTE
  */
 ?>
+
+<?php
+/*
+INICIO EDITA PRODUCTO 
+ */
+?>
+ <div class="modal fade" id="editProducto" tabindex="-1" role="dialog"  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">EDITAR PRODUCTO</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control" type="text" hidden  name="txtIdProducto" id="txtIdProducto">
+        <section id="resultado"></section>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<?php
+/*
+FIN MODAL EDITA PRODUCTO
+ */
+?>
+
+
+
  
 
 <script>
@@ -151,13 +149,13 @@ FIN MODAL ESTANTE
     toast.addEventListener('mouseleave', Swal.resumeTimer)
   }
 })
-  var myModal = document.getElementById('agregaBodegaModal');
+  const myModal = document.getElementById('agregaBodegaModal');
   var myInput = document.getElementById('txtCantidadme');
   myModal.addEventListener('shown.bs.modal', function () {
   myInput.focus();
   });
 
-  var myModal2 = document.getElementById('agregaEstanteModal');
+  const myModal2 = document.getElementById('agregaEstanteModal');
   var myInput2 = document.getElementById('txtCantidadmes');
   myModal2.addEventListener('shown.bs.modal', function () {
   myInput2.focus();
@@ -178,6 +176,7 @@ $(document).on('click','.desactivar',function (e) {
 $(function(){
 $(document).on('click','#btnGuardarBodega',function(e) {
   e.preventDefault();
+      var  busqueda = $('#txtBuscar').val();
       const idProducto = $('#txtIdProductome').val();
       const cantidad = $('#txtCantidadme').val();
       if(cantidad=="" || cantidad == 0){
@@ -203,7 +202,13 @@ $(document).on('click','#btnGuardarBodega',function(e) {
                 "closeButton":true,
                 "timeOut":500
                 });
-                window.setTimeout(function(){window.open("inventario.php","_self");}, 700);
+                if(busqueda !=""){
+                  buscar(busqueda);
+                }else{
+                  buscar();
+                } 
+                $('#txtCantidadme').val("");
+                //$('#agregaBodegaModal').hide();
               }else{
                 toastr.info("Revise los datos ingresados", "Alerta!",{
                 "progressBar":true,
@@ -222,6 +227,7 @@ $(document).on('click','#btnGuardarBodega',function(e) {
 $(function(){
     $(document).on('click','#btnGuardarEstante',function(e) {
       e.preventDefault();
+      var  busqueda = $('#txtBuscar').val();
     const idProducto = $('#txtIdProductomes').val();
     const cantidad = $('#txtCantidadmes').val();  
        if(cantidad==""){
@@ -248,7 +254,14 @@ $(function(){
                 "closeButton":true,
                 "timeOut":500
                 });
-                window.setTimeout(function(){window.open("inventario.php","_self");}, 1000);
+                if(busqueda !=""){
+                  buscar(busqueda);
+                }else{
+                  buscar();
+                }                
+                $('#txtCantidadmes').val("");
+
+                //$('#agregaEstanteModal').hide();
               }else if(respuesta == 2){
                 toastr.error("verifique la CANTIDAD a cambiar", "Error!",{
                 "progressBar":true,
@@ -420,6 +433,7 @@ $(document).on('change','#sltEmpresa',function(){
 
 
 function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, medida, unidad, precioCompra, valor){
+  var  busqueda = $('#txtBuscar').val();
     $.ajax({
     url: '../metodos/inventario.php',
     type: 'POST',
@@ -441,7 +455,11 @@ function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, m
         icon: 'success',
         title: 'Producto actualizado con éxito!'
       });
-      setTimeout( function() { window.open("inventario.php","_self"); }, 600 ); 
+      if(busqueda !=""){
+                  buscar(busqueda);
+                }else{
+                  buscar();
+                } 
       }else{
         Toast.fire({
         icon: 'info',
