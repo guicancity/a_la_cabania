@@ -106,13 +106,13 @@ while($fila = mysqli_fetch_array($ejecutar)){
   }
 $respuesta.= 
   "<tr >
-    <td> <button type=\"button\" class=\" btn btn-link producto\" data-id=\"{$idproducto}\" data-bs-toggle=\"modal\" data-bs-target=\"#editProducto\">{$nombre}</button></td>
+    <td> <button type=\"button\" class=\" btn btn-link producto\" data-id=\"{$idproducto}\">{$nombre}</button></td>
     <td> {$marca} </td>
     <td> {$medida} {$unidad} </td>
     <td> {$bodega} </td>
     <td class=\"{$cantidad}\"> {$estante} </td>
     <td> <button class=\"desactivar btn btn-danger\" data-id=\"{$idproducto}\">DESACTIVAR</button></td>
-    <td> <div class=\"btn-group\" role=\"group\" aria-label=\"Basic example\"><button class=\"bodega btn btn-info\" data-bs-toggle=\"modal\" data-bs-target=\"#agregaBodegaModal\" data-idpb=\"{$idproducto}\">AGREGAR</button> <button class=\"estante btn btn-primary\" data-bs-toggle=\"modal\" data-bs-target=\"#agregaEstanteModal\"  data-idpe=\" {$idproducto} \">AGREGAR</button></div>
+    <td> <div class=\"btn-group\" role=\"group\" aria-label=\"Basic example\"><button class=\"bodega btn btn-info\"  data-idpb=\"{$idproducto}\">AGREGAR</button> <button class=\"estante btn btn-primary\"  data-idpe=\" {$idproducto} \">AGREGAR</button></div>
       <a target=\"_blank\" href=\"../pag/detalleProducto.php?idp= {$idproducto} \" class=\" btn btn-warning\">VARIEDADES</a>
     </td>
   </tr>";
@@ -161,7 +161,7 @@ echo $respuesta;
       </div>
       <div class=\"row\">
     ";
-    $sql = "SELECT P.NOMBREPRODUCTO,P.IDEMPRESA,E.NOMBRES,P.MARCA,P.MEDIDA,P.UNIDAD,P.PRECIOCOMPRA,P.VALOR FROM PRODUCTOS P  INNER JOIN EMPRESA E ON E.IDEMPRESA = P.IDEMPRESA WHERE P.IDPRODUCTOS = ". $idProducto;
+    $sql = "SELECT E.IDEMPRESA,P.NOMBREPRODUCTO,P.IDEMPRESA,E.NOMBRES,P.MARCA,P.MEDIDA,P.UNIDAD,P.PRECIOCOMPRA,P.VALOR FROM PRODUCTOS P  INNER JOIN EMPRESA E ON E.IDEMPRESA = P.IDEMPRESA WHERE P.IDPRODUCTOS = ". $idProducto;
     $ejec = mysqli_query($conexion,$sql);
     $row = mysqli_fetch_assoc($ejec);
     $respuesta .="
@@ -172,11 +172,15 @@ echo $respuesta;
             $sql = "SELECT * FROM EMPRESA ORDER BY NOMBRES";
             $ejecuta = mysqli_query($conexion,$sql); 
             $fila1 = mysqli_fetch_assoc($ejecuta) ;  
-            $respuesta .="        
-            <option selected value=\"{$row['IDEMPRESA']}\">{$row['NOMBRES']}</option>";
+            
             while($fila = mysqli_fetch_assoc($ejecuta)){
-    $respuesta .= "
-      <option value=\"{$fila['IDEMPRESA']}\">{$fila['NOMBRES']}</option>";
+              if($row['IDEMPRESA'] == $fila['IDEMPRESA']){
+                $respuesta .= "
+                  <option selected value=\"{$fila['IDEMPRESA']}\">{$row['NOMBRES']}</option>";
+              }else{
+                $respuesta .= "
+                  <option value=\"{$fila['IDEMPRESA']}\">{$fila['NOMBRES']}</option>";
+              }
             }
     $respuesta .= "
      </select>
@@ -198,7 +202,7 @@ echo $respuesta;
       <div class=\"col\">
        <div class=\"form-group\">
           <label>MARCA</label>
-          <input class=\"form-control\" type=\"text\"  value=\"{$row['MARCA']}\" name=\"txtMarca\" id=\"txtMarca\">
+          <input class=\"form-control\" type=\"text\" value=\"{$row['MARCA']}\" name=\"txtMarca\" id=\"txtMarca\">
         </div>
       </div>
     </div>
@@ -206,14 +210,14 @@ echo $respuesta;
       <div class=\"col\">
         <div class=\"form-group\">
           <label>MEDIDA</label>
-          <input class=\"form-control\" type=\"text\"  value=\"{$row['MEDIDA']}\" name=\"txtMedida\" id=\"txtMedida\">
+          <input class=\"form-control\" type=\"text\" value=\"{$row['MEDIDA']}\" name=\"txtMedida\" id=\"txtMedida\">
         </div>
       </div>
 
       <div class=\"col\">
         <div class=\"form-group\">
           <label>UNIDAD</label>
-          <input class=\"form-control\" type=\"text\"  value=\"{$row['UNIDAD']}\" name=\"txtUnidad\" id=\"txtUnidad\">
+          <input class=\"form-control\" type=\"text\" value=\"{$row['UNIDAD']}\" name=\"txtUnidad\" id=\"txtUnidad\">
         </div>
       </div>
     </div>
@@ -222,14 +226,14 @@ echo $respuesta;
       <div class=\"col\">
         <div class=\"form-group\">
           <label>PRECIO COMPRA</label>
-          <input class=\"form-control\" type=\"number\"  value=\"{$row['PRECIOCOMPRA']}\" name=\"txtPrecioCompra\" id=\"txtPrecioCompra\">
+          <input class=\"form-control\" type=\"number\" value=\"{$row['PRECIOCOMPRA']}\" name=\"txtPrecioCompra\" id=\"txtPrecioCompra\">
         </div>
       </div>
 
       <div class=\"col\">
         <div class=\"form-group\">
           <label>VALOR</label>
-          <input class=\"form-control\" type=\"number\"   value=\"{$row['VALOR']}\" name=\"txtValor\" id=\"txtValor\">
+          <input class=\"form-control\" type=\"number\" value=\"{$row['VALOR']}\" name=\"txtValor\" id=\"txtValor\">
         </div>
       </div>
     </div>

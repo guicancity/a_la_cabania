@@ -132,17 +132,12 @@ INICIO EDITA PRODUCTO
 FIN MODAL EDITA PRODUCTO
  */
 ?>
-
-
-
- 
-
 <script>
   const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
   showConfirmButton: false,
-  timer: 1000,
+  timer: 2000,
   timerProgressBar: true,
   didOpen: (toast) => {
     toast.addEventListener('mouseenter', Swal.stopTimer)
@@ -172,6 +167,37 @@ $(document).on('click','.desactivar',function (e) {
   desactivaProducto(id,producto);
  });
 
+$(document).on('click','.bodega',function(){
+  const idProducto = $(this).attr('data-idpb');
+  $('#txtIdProductome').val(idProducto);
+  $('#agregaBodegaModal').modal('show');
+
+});
+$(document).on('click','.estante',function(){
+  const idProducto = $(this).attr('data-idpe');
+  $('#txtIdProductomes').val(idProducto);
+  $('#agregaEstanteModal').modal('show');   
+});
+$(document).on('click','.producto',function(){
+  const idProducto = $(this).attr('data-id');
+  $('#editProducto').modal('show');
+  $('#txtIdProducto').val(idProducto);
+  $.ajax({
+    url:'../metodos/inventario.php',
+    type:'POST',
+    data:{accion: 'seleccionaProductoxId',
+          idProducto:idProducto
+    },
+  })
+  .done(function(resultado){
+    $('#resultado').html(resultado);
+    var empresa = document.getElementById("sltEmpresa").value;
+    var idproducto = $('#txtIdProducto').val();
+    loadRepartidor(empresa,idproducto);
+  }); 
+
+});
+
 
 $(function(){
 $(document).on('click','#btnGuardarBodega',function(e) {
@@ -180,11 +206,11 @@ $(document).on('click','#btnGuardarBodega',function(e) {
       const idProducto = $('#txtIdProductome').val();
       const cantidad = $('#txtCantidadme').val();
       if(cantidad=="" || cantidad == 0){
-          toastr.error("La CANTIDAD no puede ser vacia o 0", "Error!",{
-            "progressBar":true,
-            "closeButton":true,
-            "timeOut":2000
-          });
+        Toast.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  html:'La <b>CANTIDAD</b> no puede ser <b>vacia</b> o <b>0</b>'
+                  });
           return false;
         }else{
           $.ajax({
@@ -197,18 +223,17 @@ $(document).on('click','#btnGuardarBodega',function(e) {
             },
             success: function(respuesta){
               if (respuesta == 1) {
-                toastr.success("Cantidad actualizada",{
-                "progressBar":true,
-                "closeButton":true,
-                "timeOut":500
-                });
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Cantidad actualizada'
+                  });
                 if(busqueda !=""){
                   buscar(busqueda);
                 }else{
                   buscar();
                 } 
                 $('#txtCantidadme').val("");
-                //$('#agregaBodegaModal').hide();
+                $('#agregaBodegaModal').modal('hide');
               }else{
                 toastr.info("Revise los datos ingresados", "Alerta!",{
                 "progressBar":true,
@@ -231,11 +256,10 @@ $(function(){
     const idProducto = $('#txtIdProductomes').val();
     const cantidad = $('#txtCantidadmes').val();  
        if(cantidad==""){
-          toastr.error("La CANTIDAD no puede ser vacia o 0", "Error!",{
-            "progressBar":true,
-            "closeButton":true,
-            "timeOut":2000
-          });
+        Toast.fire({
+                  icon: 'error',
+                  title: 'La CANTIDAD no puede ser vacia o 0'
+                  });
           return false;
         }else{
 
@@ -249,11 +273,11 @@ $(function(){
             },
             success: function(respuesta){
               if (respuesta == 1) {
-                toastr.success("Cantidad actualizada",{
-                "progressBar":true,
-                "closeButton":true,
-                "timeOut":500
-                });
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Cantidad actualizada!'
+                  });
+                
                 if(busqueda !=""){
                   buscar(busqueda);
                 }else{
@@ -261,13 +285,12 @@ $(function(){
                 }                
                 $('#txtCantidadmes').val("");
 
-                //$('#agregaEstanteModal').hide();
+                $('#agregaEstanteModal').modal('hide');
               }else if(respuesta == 2){
-                toastr.error("verifique la CANTIDAD a cambiar", "Error!",{
-                "progressBar":true,
-                "closeButton":true,
-                "timeOut":4000
-                });
+                Toast.fire({
+                  icon: 'error',
+                  title: 'verifique la CANTIDAD a cambiar'
+                  });
               }else{
                 toastr.info("Revise los datos ingresados", "Alerta!",{
                 "progressBar":true,
@@ -299,30 +322,24 @@ $(document).on('click','#btnGuardar',function(e){
   const valor =               $('#txtValor').val();
 
   if(nombreProducto==""){
-          toastr.error("El NOMBRE DEL PRODUCTO no puede ser vacio", "Error!",{
-            "progressBar":true,
-            "closeButton":true,
-            "timeOut":2000
-          });
-          
+        Toast.fire({
+                  icon: 'error',
+                  title: 'El NOMBRE DEL PRODUCTO no puede ser vacio'
+                  });
           return false;
         }
     if(precioCompra==""){
-          toastr.error("El PRECIO DE COMPRA no puede ser vacio", "Error!",{
-            "progressBar":true,
-            "closeButton":true,
-            "timeOut":2000
-          });
-          
+      Toast.fire({
+                  icon: 'error',
+                  title: 'El PRECIO DE COMPRA no puede ser vacio'
+                  });          
           return false;
         }
     if(valor==""){
-          toastr.error("El VALOR no puede ser vacio", "Error!",{
-            "progressBar":true,
-            "closeButton":true,
-            "timeOut":2000
-          });
-          
+      Toast.fire({
+                  icon: 'error',
+                  title: 'El VALOR no puede ser vacio'
+                  });        
           return false;
         }
         updateproduct(idProducto,idEmpresa,idPersonas,nombreProducto,marca,medida,unidad,precioCompra,valor);
@@ -334,41 +351,7 @@ $(document).on('click','#btnGuardar',function(e){
 $(document).on('keyup','#txtPrecioCompra',function(){
     const precioCompra =$('#txtPrecioCompra').val();
     $('#txtValor').val(margenganacia(precioCompra));
-  })
-
-
-
-$(document).on('click','.bodega',function(){
-  const idProducto = $(this).attr('data-idpb');
-  $('#txtIdProductome').val(idProducto);
-  $('#agregaBodegaModal').modal();
 });
-
-$(document).on('click','.estante',function(){
-  const idProducto = $(this).attr('data-idpe');
-  $('#txtIdProductomes').val(idProducto);
-  $('#agregaEstanteModal').modal();   
-});
-
-$(document).on('click','.producto',function(){
-  const idProducto = $(this).attr('data-id');
-  $('#txtIdProducto').val(idProducto);
-  $.ajax({
-    url:'../metodos/inventario.php',
-    type:'POST',
-    data:{accion: 'seleccionaProductoxId',
-          idProducto:idProducto
-    },
-  })
-  .done(function(resultado){
-    $('#resultado').html(resultado);
-    var empresa = document.getElementById("sltEmpresa").value;
-    var idproducto = $('#txtIdProducto').val();
-    loadRepartidor(empresa,idproducto);
-  }); 
-
-});
-
 
 $(document).on('keyup','#txtBuscar',function(e){
   e.preventDefault();
@@ -455,6 +438,7 @@ function updateproduct(idProducto,idEmpresa,idPersonas, nombreProducto, marca, m
         icon: 'success',
         title: 'Producto actualizado con éxito!'
       });
+       $('#editProducto').modal('hide');
       if(busqueda !=""){
                   buscar(busqueda);
                 }else{
