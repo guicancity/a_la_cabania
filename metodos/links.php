@@ -16,7 +16,7 @@
 
 <script src="../metodos/funciones.js"></script>
 <script src="../js/toastr.min.js"></script>
-<script src="../js/sweetalert2.min.js"></script>
+<script src="../js/sweetalert2.all.min.js"></script>
 
 
 
