@@ -171,8 +171,7 @@ echo $respuesta;
           <select class=\"form-select\" id=\"sltEmpresa\">";
             $sql = "SELECT * FROM EMPRESA ORDER BY NOMBRES";
             $ejecuta = mysqli_query($conexion,$sql); 
-            $fila1 = mysqli_fetch_assoc($ejecuta) ;  
-            
+                        
             while($fila = mysqli_fetch_assoc($ejecuta)){
               if($row['IDEMPRESA'] == $fila['IDEMPRESA']){
                 $respuesta .= "
