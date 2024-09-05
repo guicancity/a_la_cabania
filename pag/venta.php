@@ -186,7 +186,7 @@
 				
 	})
 
-  $(document).on('keyup','.txtCantidadProducto', function() { //change
+  $(document).on('change','.txtCantidadProducto', function() { //change
     var factura = $('#txtFactura').val();
     var idProducto = $(this).attr("id");
     var cantidad = parseInt($(this).val());

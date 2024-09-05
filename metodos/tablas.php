@@ -155,51 +155,6 @@ break;
     echo $respuesta;
 
     break;
-    case 'productosxfactura':
-      $idfactura = $_POST['idfactura'];
-      
-      $sql = "SELECT P.IDPRODUCTOS, P.NOMBREPRODUCTO,DF.VALORPRODUCTOS,DF.CANTIDAD,DF.VTOTAL, DF.FECHAVENTA,DF.HORAFACTURA FROM DETALLE_FACTURA DF INNER JOIN PRODUCTOS P ON P.IDPRODUCTOS = DF.IDPRODUCTOS WHERE IDFACTURA = ". $idfactura." ORDER BY DF.FECHAVENTA DESC";
-      $ejecuta = mysqli_query($conexion,$sql);
-      $idproductos = "";
-
-      $respuesta .="
-      <table class=\"table table-hover\">
-								<thead>
-									<tr>
-										<th>Productos</th>
-										<th>Valor</th>
-										<th>cantidad</th>
-										<th>Total</th>
-                    <th>Fecha de venta</th>
-									</tr>
-								</thead>
-								<tbody>";
-                while($fila=mysqli_fetch_array($ejecuta)){
-                  $valor = number_format($fila["VALORPRODUCTOS"], 0, ",", ".");
-                  $valortotal = number_format($fila["VTOTAL"], 0, ",", ".");
-                  $fechaventa = date("d/m/Y",strtotime($fila["FECHAVENTA"]));
-                $respuesta .="
-									<tr>
-										<td>{$fila["NOMBREPRODUCTO"]}  </td>
-										<td>$ {$valor}</td>
-										<td>{$fila["CANTIDAD"]}</td> 
-										<td>$ {$valortotal}</td>
-                    <td>{$fechaventa}</td>
-
-									</tr>
-
-                  ";
-                }
-$respuesta .="   
-        {$idproductos}               
-								</tbody>
-							</table>
-      
-      
-      ";
-      echo $respuesta;
-
-      break;
   	default: 
 		// code...
 		break;

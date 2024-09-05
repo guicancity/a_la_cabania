@@ -109,6 +109,13 @@ function idpersonaxproducto($conexion,$idproducto){
 	$idpersona = $fila['IDPERSONAS'];
 	return $idpersona;
 }
+function totalabonosxfactura($conexion,$idfactura){
+	$sql = "SELECT SUM(VALORABONO) ABONOS FROM ABONOS WHERE IDFACTURA = ".$idfactura;
+	$execute = mysqli_query($conexion,$sql);
+	$fila = mysqli_fetch_assoc($execute);
+	$valorabonos = $fila['ABONOS'];
+	return $valorabonos;
+}
 
 function fechaaletras($fecha){
 	$mesletra = "";
